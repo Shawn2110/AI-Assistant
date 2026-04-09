@@ -10,7 +10,8 @@
 #   - App Control: Open/close apps, manage files, adjust system settings
 #   - Google Suite: Gmail, Google Calendar, Google Drive
 #   - Microsoft 365: Outlook, Teams, OneDrive
-#   - Messaging: Telegram, Discord, WhatsApp
+#   - Messaging: Telegram, Discord, WhatsApp, Slack
+#   - Design: Figma (view projects, export assets, get comments)
 #   - Browser Automation: Search, navigate, fill forms
 #   - Remote Access: Control your laptop from your phone
 #   - Desktop & Mobile App: .NET MAUI app for Windows, Android, iOS
@@ -131,5 +132,9 @@ integrations:
     enabled: false
   whatsapp:
     enabled: false
+  slack:
+    enabled: false           # Slack messaging and workspace management
+  figma:
+    enabled: false           # Figma design files, comments, exports
   browser:
     enabled: false           # Browser automation (search, navigate, fill forms)
