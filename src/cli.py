@@ -1,0 +1,149 @@
+"""CLI entry point for the AI Assistant."""
+
+from __future__ import annotations
+
+import argparse
+import asyncio
+import sys
+
+from src.core.config import get_settings, reload_settings
+from src.core.exceptions import AssistantError
+from src.core.logger import get_logger, setup_logging
+
+log = get_logger(__name__)
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        prog="assistant",
+        description="AI Assistant - your personal AI helper",
+    )
+    parser.add_argument(
+        "message",
+        nargs="*",
+        help="Send a message directly (e.g., assistant what time is it)",
+    )
+    parser.add_argument(
+        "--voice", action="store_true", help="Start in voice mode (wake word + mic)"
+    )
+    parser.add_argument(
+        "--server", action="store_true", help="Start the API server for phone access"
+    )
+    parser.add_argument(
+        "--setup", action="store_true", help="Interactive setup wizard"
+    )
+    parser.add_argument(
+        "--provider", type=str, default=None,
+        help="Override AI provider (groq, gemini, ollama, claude, openai)",
+    )
+    parser.add_argument(
+        "--verbose", "-v", action="store_true", help="Enable debug logging"
+    )
+    return parser.parse_args()
+
+
+async def run_chat(message: str, provider: str | None = None) -> str:
+    """Send a single message and get a response."""
+    from src.ai.agent import AssistantAgent
+
+    agent = AssistantAgent()
+    return await agent.chat(message, provider=provider)
+
+
+async def run_interactive(provider: str | None = None) -> None:
+    """Run an interactive chat loop."""
+    from src.ai.agent import AssistantAgent
+
+    settings = get_settings()
+    agent = AssistantAgent(settings=settings)
+
+    name = settings.assistant.name
+    print(f"\n🤖 {name} is ready! Type your message (or 'quit' to exit).\n")
+
+    # Show active provider
+    active = settings.ai.active_provider
+    if active:
+        print(f"   Using: {active} ({settings.providers[active].model})")
+    print()
+
+    while True:
+        try:
+            user_input = input("You: ").strip()
+        except (KeyboardInterrupt, EOFError):
+            print("\nGoodbye!")
+            break
+
+        if not user_input:
+            continue
+        if user_input.lower() in ("quit", "exit", "bye"):
+            print(f"\n{name}: Goodbye! 👋")
+            break
+
+        try:
+            response = await agent.chat(user_input, provider=provider)
+            print(f"\n{name}: {response}\n")
+        except AssistantError as e:
+            print(f"\n⚠️  Error: {e}\n")
+        except Exception as e:
+            log.error("chat.error", error=str(e))
+            print(f"\n⚠️  Unexpected error: {e}\n")
+
+
+async def run_setup() -> None:
+    """Interactive setup wizard to configure the assistant."""
+    settings = get_settings()
+
+    print("\n" + "=" * 50)
+    print("  AI Assistant - Setup Wizard")
+    print("=" * 50)
+    print("\nAvailable AI Providers:\n")
+
+    providers = settings.providers
+    provider_list = list(providers.keys())
+
+    for i, (name, config) in enumerate(providers.items(), 1):
+        status = "✅ enabled" if config.enabled else "❌ disabled"
+        tier = f"[{config.tier.upper()}]"
+        print(f"  {i}. {name:<10} {tier:<8} - {config.description}  ({status})")
+
+    print(f"\n  Current active provider: {settings.ai.active_provider or 'None'}")
+    print("\nTo configure:")
+    print("  1. Copy .env.example to .env")
+    print("  2. Add your API keys to .env")
+    print("  3. Edit config/settings.yaml to enable providers and set active_provider")
+    print("  4. For Ollama: install from https://ollama.com then run 'ollama pull qwen3:8b'")
+    print()
+
+
+def main():
+    args = parse_args()
+    setup_logging("DEBUG" if args.verbose else "INFO")
+
+    if args.setup:
+        asyncio.run(run_setup())
+        return
+
+    if args.voice:
+        print("Voice mode coming soon! (Phase 2)")
+        return
+
+    if args.server:
+        print("Server mode coming soon! (Phase 3)")
+        return
+
+    if args.message:
+        # Single message mode
+        message = " ".join(args.message)
+        try:
+            response = asyncio.run(run_chat(message, provider=args.provider))
+            print(response)
+        except AssistantError as e:
+            print(f"Error: {e}", file=sys.stderr)
+            sys.exit(1)
+    else:
+        # Interactive mode
+        asyncio.run(run_interactive(provider=args.provider))
+
+
+if __name__ == "__main__":
+    main()

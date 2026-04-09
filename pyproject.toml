@@ -11,9 +11,12 @@ dependencies = [
     "python-jose[cryptography]>=3.3",
     "slowapi>=0.1",
 
-    # AI Providers (free)
-    "groq>=0.15",
-    "google-genai>=1.0",
+    # AI Orchestration (LangGraph + LangChain)
+    "langgraph>=0.3",
+    "langchain>=0.3",
+    "langchain-groq>=0.2",
+    "langchain-google-genai>=2.1",
+    "langchain-ollama>=0.3",
 
     # Voice
     "sounddevice>=0.5",
@@ -41,8 +44,8 @@ dependencies = [
 
 [project.optional-dependencies]
 paid = [
-    "anthropic>=0.42",
-    "openai>=1.60",
+    "langchain-anthropic>=0.3",
+    "langchain-openai>=0.3",
 ]
 microsoft = [
     "msgraph-sdk>=1.16",
