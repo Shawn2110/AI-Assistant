@@ -1,0 +1,33 @@
+# Environment
+.env
+.venv/
+env/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Voice models (large files)
+models/
+
+# Logs
+*.log
+logs/
+
+# Tunnel
+ngrok.yml
