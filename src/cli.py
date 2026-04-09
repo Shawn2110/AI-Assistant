@@ -95,38 +95,14 @@ async def run_interactive(provider: str | None = None) -> None:
             print(f"\n⚠️  Unexpected error: {e}\n")
 
 
-async def run_setup() -> None:
-    """Interactive setup wizard to configure the assistant."""
-    settings = get_settings()
-
-    print("\n" + "=" * 50)
-    print("  AI Assistant - Setup Wizard")
-    print("=" * 50)
-    print("\nAvailable AI Providers:\n")
-
-    providers = settings.providers
-    provider_list = list(providers.keys())
-
-    for i, (name, config) in enumerate(providers.items(), 1):
-        status = "✅ enabled" if config.enabled else "❌ disabled"
-        tier = f"[{config.tier.upper()}]"
-        print(f"  {i}. {name:<10} {tier:<8} - {config.description}  ({status})")
-
-    print(f"\n  Current active provider: {settings.ai.active_provider or 'None'}")
-    print("\nTo configure:")
-    print("  1. Copy .env.example to .env")
-    print("  2. Add your API keys to .env")
-    print("  3. Edit config/settings.yaml to enable providers and set active_provider")
-    print("  4. For Ollama: install from https://ollama.com then run 'ollama pull qwen3:8b'")
-    print()
-
-
 def main():
     args = parse_args()
     setup_logging("DEBUG" if args.verbose else "INFO")
 
     if args.setup:
-        asyncio.run(run_setup())
+        from src.core.setup import run_setup
+        run_setup()
+        reload_settings()
         return
 
     if args.voice:
