@@ -42,20 +42,26 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def _create_agent():
+    """Create the assistant agent with all enabled tools."""
+    from src.ai.agent import AssistantAgent
+    from src.integrations import get_all_tools
+
+    settings = get_settings()
+    tools = get_all_tools()
+    return AssistantAgent(settings=settings, tools=tools)
+
+
 async def run_chat(message: str, provider: str | None = None) -> str:
     """Send a single message and get a response."""
-    from src.ai.agent import AssistantAgent
-
-    agent = AssistantAgent()
+    agent = _create_agent()
     return await agent.chat(message, provider=provider)
 
 
 async def run_interactive(provider: str | None = None) -> None:
     """Run an interactive chat loop."""
-    from src.ai.agent import AssistantAgent
-
     settings = get_settings()
-    agent = AssistantAgent(settings=settings)
+    agent = _create_agent()
 
     name = settings.assistant.name
     print(f"\n🤖 {name} is ready! Type your message (or 'quit' to exit).\n")
