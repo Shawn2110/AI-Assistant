@@ -1,154 +1,88 @@
-# ============================================================
-# AI Assistant - Open Source Personal AI Assistant
-# ============================================================
-# An open-source AI assistant you download and run yourself.
-# Your data, your AI, your rules.
-#
-# QUICK START:
-#   1. Run: python -m src --setup
-#   2. Pick your AI provider (bring your own API key or run local)
-#   3. Enable integrations you want
-#   4. Run: python -m src
-#
-# FEATURES:
-#   - Chatbot: Conversational AI assistant
-#   - Voice Commands: Talk to it like Siri/Bixby
-#   - Notification Hub: Get updates from all your connected apps
-#   - App Control: Open/close apps, manage files, system settings
-#   - Google Suite: Gmail, Google Calendar, Google Drive
-#   - Microsoft 365: Outlook, Teams, OneDrive
-#   - Messaging: Telegram, Discord, WhatsApp, Slack, Instagram
-#   - Design: Figma (projects, assets, comments)
-#   - Browser Automation: Search, navigate, fill forms
-#   - Remote Access: Control your laptop from your phone
-#   - Desktop & Mobile App: .NET MAUI (Windows, Android, iOS)
-#
-# AI PROVIDERS (bring your own key or run locally):
-#   - Ollama (FREE, LOCAL): Qwen, Llama, Mistral -- runs on your machine
-#   - Groq (FREE, CLOUD): Llama 3 -- fast free API, you provide the key
-#   - Gemini (FREE, CLOUD): Google Gemini 2.0 Flash
-#   - Claude (PAID): Anthropic Claude -- you provide your API key
-#   - OpenAI (PAID): GPT-4o -- you provide your API key
-#   - Custom: Any OpenAI-compatible server (LM Studio, vLLM, LocalAI)
-#
-# PRIVACY:
-#   - All processing runs on YOUR machine
-#   - API keys are stored locally in your .env file
-#   - Auth tokens stored locally in config/tokens/
-#   - Cloud AI providers only used if YOU choose them
-#   - Reply-to-message is opt-in with privacy warning
-# ============================================================
-
-# Persona -- your assistant's identity (customize in setup wizard)
 persona:
-  name: "Assistant"             # User sets this during setup
-  wake_word: "hey assistant"    # Voice activation phrase
-  tagline: "At your service."
-  tone: "professional-witty"    # professional-witty | friendly | formal | casual | custom
-  greeting: "Good {time_of_day}. {name} online. How can I assist you?"
-  farewell: "Until next time. {name} signing off."
-  personality: >
-    You are {name}, a personal AI assistant.
-    You speak in a professional yet witty tone, similar to Jarvis from Iron Man.
-    You are efficient, slightly formal, but show personality through dry humor
-    and clever observations. You address the user respectfully and always stay
-    focused on getting things done. You keep responses concise unless detail is
-    requested. When executing tasks, you confirm actions briefly and report results
-    clearly. You never say 'as an AI' or break character.
-
-# AI Provider -- one active provider at a time
-# Change via CLI: python -m src --setup
+  name: Mike
+  wake_word: hey mike
+  tagline: At your service.
+  tone: professional-witty
+  greeting: Good {time_of_day}. {name} online. How can I assist you?
+  farewell: Until next time. {name} signing off.
+  personality: You are {name}, a personal AI assistant. You speak in a professional
+    yet witty tone, similar to Jarvis from Iron Man. You are efficient, slightly formal,
+    but show personality through dry humor and clever observations. You address the
+    user respectfully and always stay focused on getting things done. You keep responses
+    concise unless detail is requested. When executing tasks, you confirm actions
+    briefly and report results clearly. You never say 'as an AI' or break character.
 ai:
-  active_provider: null    # Set during setup
+  active_provider: groq
   fallback_chain:
-    - ollama               # Local fallback
-    - groq
-  # Advanced: assign different AIs to different tasks
-  # task_routing:
-  #   coding: claude
-  #   research: groq
-
-# Available AI providers (user picks ONE as default, can switch anytime)
+  - ollama
+  - groq
 providers:
   ollama:
-    enabled: false
-    model: "qwen3:8b"
-    base_url: "http://localhost:11434"
+    enabled: true
+    model: qwen3:8b
+    base_url: http://localhost:11434
     max_tokens: 4096
     temperature: 0.7
     tier: free
-    description: "Local AI (Qwen/Llama/Mistral) -- fully offline, your data stays on your machine"
-
+    description: Local AI (Qwen/Llama/Mistral) -- fully offline, your data stays on
+      your machine
   groq:
-    enabled: false
-    api_key_env: "GROQ_API_KEY"
-    model: "llama-3.3-70b-versatile"
+    enabled: true
+    api_key_env: GROQ_API_KEY
+    model: llama-3.3-70b-versatile
     max_tokens: 4096
     temperature: 0.7
     tier: free
-    description: "Fast free cloud AI via Groq (Llama 3)"
-
+    description: Fast free cloud AI via Groq (Llama 3)
   gemini:
     enabled: false
-    api_key_env: "GEMINI_API_KEY"
-    model: "gemini-2.0-flash"
+    api_key_env: GEMINI_API_KEY
+    model: gemini-2.0-flash
     max_tokens: 4096
     temperature: 0.7
     tier: free
-    description: "Google Gemini 2.0 Flash (free tier)"
-
+    description: Google Gemini 2.0 Flash (free tier)
   claude:
-    enabled: false
-    api_key_env: "ANTHROPIC_API_KEY"
-    model: "claude-sonnet-4-20250514"
+    enabled: true
+    api_key_env: ANTHROPIC_API_KEY
+    model: claude-sonnet-4-20250514
     max_tokens: 4096
     temperature: 0.7
     tier: paid
-    description: "Anthropic Claude -- best for coding and reasoning"
-
+    description: Anthropic Claude -- best for coding and reasoning
   openai:
     enabled: false
-    api_key_env: "OPENAI_API_KEY"
-    model: "gpt-4o-mini"
+    api_key_env: OPENAI_API_KEY
+    model: gpt-4o-mini
     max_tokens: 4096
     temperature: 0.7
     tier: paid
-    description: "OpenAI GPT-4o -- versatile, widely used"
-
-# Custom providers added via: python -m src --setup -> Add Custom AI
+    description: OpenAI GPT-4o -- versatile, widely used
 custom_providers: {}
-
-# Voice
 voice:
   enabled: true
-  stt_engine: vosk           # vosk (offline) | groq_whisper (online free)
-  tts_engine: edge_tts       # pyttsx3 (offline) | edge_tts (online free)
-  tts_voice: "en-US-GuyNeural"
+  stt_engine: vosk
+  tts_engine: edge_tts
+  tts_voice: en-US-GuyNeural
   silence_threshold_ms: 500
   listen_timeout_s: 10
-
-# Server (for phone app connection)
 server:
-  host: "0.0.0.0"
+  host: 0.0.0.0
   port: 8765
   cors_origins:
-    - "*"
-
-# Remote access (phone -> laptop over internet)
+  - '*'
 tunnel:
   enabled: false
-  provider: ngrok            # ngrok | tailscale
+  provider: ngrok
   ngrok:
     region: us
-
-# Integrations
 integrations:
   system:
-    enabled: true            # App control, file management, system settings
+    enabled: true
   google:
-    enabled: false           # Gmail, Calendar, Drive
+    enabled: false
   microsoft:
-    enabled: false           # Outlook, Teams, OneDrive
+    enabled: false
   telegram:
     enabled: false
   discord:
@@ -156,10 +90,11 @@ integrations:
   whatsapp:
     enabled: false
   instagram:
-    enabled: false           # Instagram DMs, comments, notifications
+    enabled: false
   slack:
-    enabled: false           # Slack messaging and workspace management
+    enabled: false
   figma:
-    enabled: false           # Figma design files, comments, exports
+    enabled: false
   browser:
-    enabled: false           # Browser automation (search, navigate, fill forms)
+    enabled: false
+voice_automations: {}
