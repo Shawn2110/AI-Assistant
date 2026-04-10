@@ -30,6 +30,11 @@ dependencies = [
     "google-api-python-client>=2.160",
     "pywinauto>=0.6",
 
+    # System tray & notifications
+    "pystray>=0.19",
+    "Pillow>=11.0",
+    "winotify>=1.1",
+
     # Config & Utils
     "pydantic-settings>=2.7",
     "pydantic>=2.10",

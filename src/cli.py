@@ -37,6 +37,10 @@ def parse_args() -> argparse.Namespace:
         help="Override AI provider (groq, gemini, ollama, claude, openai)",
     )
     parser.add_argument(
+        "--daemon", action="store_true",
+        help="Run as background daemon with system tray icon and notifications"
+    )
+    parser.add_argument(
         "--verbose", "-v", action="store_true", help="Enable debug logging"
     )
     return parser.parse_args()
@@ -108,6 +112,11 @@ def main():
         from src.core.setup import run_setup
         run_setup()
         reload_settings()
+        return
+
+    if args.daemon:
+        from src.daemon import start_daemon
+        start_daemon()
         return
 
     if args.voice:
