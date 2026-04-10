@@ -310,6 +310,8 @@ class DesktopPet:
         from src.pet.chatwindow import ChatWindow
         self._chat_window = ChatWindow(
             self.root,
+            pet_x=self.x,
+            pet_y=self.y,
             on_close=lambda: setattr(self, '_chat_window', None),
         )
 

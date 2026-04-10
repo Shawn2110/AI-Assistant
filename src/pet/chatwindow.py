@@ -19,54 +19,59 @@ log = get_logger(__name__)
 
 
 class ChatWindow:
-    """Chat window UI that connects to the AI agent."""
+    """Small chat bubble that appears near the desktop pet."""
 
-    def __init__(self, parent_root: tk.Tk, on_close=None):
+    def __init__(self, parent_root: tk.Tk, pet_x: int = 0, pet_y: int = 0, on_close=None):
         self.settings = get_settings()
         self.persona = self.settings.persona
         self._agent = None
         self._on_close = on_close
 
-        # Create toplevel window
+        # Create toplevel window -- small bubble
         self.window = tk.Toplevel(parent_root)
-        self.window.title(f"{self.persona.name} - Chat")
-        self.window.geometry("450x600")
-        self.window.configure(bg="#0d1117")
+        self.window.overrideredirect(True)  # No title bar -- looks like a chat bubble
         self.window.attributes("-topmost", True)
-        self.window.protocol("WM_DELETE_WINDOW", self._close)
+        self.window.configure(bg="#161b22")
+
+        # Position: above and to the right of the pet
+        w, h = 320, 400
+        screen_w = parent_root.winfo_screenwidth()
+        x = min(pet_x + 40, screen_w - w - 10)
+        y = max(pet_y - h - 10, 10)
+        self.window.geometry(f"{w}x{h}+{x}+{y}")
+
+        # Rounded border effect
+        self.window.config(highlightbackground="#30363d", highlightthickness=1)
 
         self._build_ui()
         self._add_message(self.persona.name, self.persona.get_greeting(), is_bot=True)
 
     def _build_ui(self):
-        """Build the chat UI."""
-        # Header
-        header = tk.Frame(self.window, bg="#161b22", height=50)
+        """Build compact chat bubble UI."""
+        # Header bar with name and close button
+        header = tk.Frame(self.window, bg="#21262d", height=30)
         header.pack(fill=tk.X)
         header.pack_propagate(False)
 
-        # Provider info
-        active = self.settings.ai.active_provider or "not set"
-        all_provs = self.settings.all_providers
-        model = all_provs[active].model if active in all_provs else ""
+        # Make header draggable
+        header.bind("<Button-1>", self._start_drag)
+        header.bind("<B1-Motion>", self._do_drag)
 
         tk.Label(
             header,
-            text=f"  {self.persona.name}",
-            font=("Segoe UI", 14, "bold"),
+            text=f" {self.persona.name}",
+            font=("Segoe UI", 9, "bold"),
             fg="#58a6ff",
-            bg="#161b22",
+            bg="#21262d",
             anchor="w",
-        ).pack(side=tk.LEFT, padx=5, pady=10)
+        ).pack(side=tk.LEFT, padx=3, pady=3)
 
-        tk.Label(
-            header,
-            text=f"{active}: {model}  ",
-            font=("Segoe UI", 9),
-            fg="#8b949e",
-            bg="#161b22",
-            anchor="e",
-        ).pack(side=tk.RIGHT, padx=5, pady=10)
+        close_btn = tk.Label(
+            header, text=" X ", font=("Segoe UI", 9, "bold"),
+            fg="#8b949e", bg="#21262d", cursor="hand2",
+        )
+        close_btn.pack(side=tk.RIGHT, padx=3, pady=3)
+        close_btn.bind("<Button-1>", lambda e: self._close())
 
         # Chat display area
         self.chat_display = scrolledtext.ScrolledText(
@@ -74,51 +79,61 @@ class ChatWindow:
             wrap=tk.WORD,
             bg="#0d1117",
             fg="#c9d1d9",
-            font=("Segoe UI", 10),
+            font=("Segoe UI", 9),
             relief=tk.FLAT,
-            padx=15,
-            pady=10,
+            padx=8,
+            pady=6,
             state=tk.DISABLED,
             cursor="arrow",
             insertbackground="#c9d1d9",
         )
-        self.chat_display.pack(fill=tk.BOTH, expand=True, padx=5, pady=(0, 5))
+        self.chat_display.pack(fill=tk.BOTH, expand=True, padx=2, pady=(0, 2))
 
-        # Configure text tags for styling
-        self.chat_display.tag_config("bot_name", foreground="#58a6ff", font=("Segoe UI", 10, "bold"))
-        self.chat_display.tag_config("user_name", foreground="#7ee787", font=("Segoe UI", 10, "bold"))
-        self.chat_display.tag_config("bot_msg", foreground="#c9d1d9", font=("Segoe UI", 10))
-        self.chat_display.tag_config("user_msg", foreground="#e6edf3", font=("Segoe UI", 10))
-        self.chat_display.tag_config("system", foreground="#8b949e", font=("Segoe UI", 9, "italic"))
+        # Configure text tags
+        self.chat_display.tag_config("bot_name", foreground="#58a6ff", font=("Segoe UI", 9, "bold"))
+        self.chat_display.tag_config("user_name", foreground="#7ee787", font=("Segoe UI", 9, "bold"))
+        self.chat_display.tag_config("bot_msg", foreground="#c9d1d9", font=("Segoe UI", 9))
+        self.chat_display.tag_config("user_msg", foreground="#e6edf3", font=("Segoe UI", 9))
+        self.chat_display.tag_config("system", foreground="#8b949e", font=("Segoe UI", 8, "italic"))
 
         # Input area
         input_frame = tk.Frame(self.window, bg="#161b22")
-        input_frame.pack(fill=tk.X, padx=5, pady=5)
+        input_frame.pack(fill=tk.X, padx=2, pady=2)
 
         self.input_field = tk.Entry(
             input_frame,
             bg="#21262d",
             fg="#c9d1d9",
-            font=("Segoe UI", 11),
+            font=("Segoe UI", 9),
             relief=tk.FLAT,
             insertbackground="#c9d1d9",
         )
-        self.input_field.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(5, 5), pady=8, ipady=8)
+        self.input_field.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=3, pady=4, ipady=5)
         self.input_field.bind("<Return>", self._on_send)
+        self.input_field.bind("<Escape>", lambda e: self._close())
         self.input_field.focus_set()
 
         send_btn = tk.Button(
             input_frame,
-            text="Send",
+            text=">",
             bg="#238636",
             fg="white",
-            font=("Segoe UI", 10, "bold"),
+            font=("Segoe UI", 9, "bold"),
             relief=tk.FLAT,
             cursor="hand2",
             command=lambda: self._on_send(None),
-            padx=15,
+            width=3,
         )
-        send_btn.pack(side=tk.RIGHT, padx=5, pady=8)
+        send_btn.pack(side=tk.RIGHT, padx=3, pady=4)
+
+    def _start_drag(self, event):
+        self._drag_x = event.x
+        self._drag_y = event.y
+
+    def _do_drag(self, event):
+        x = self.window.winfo_x() + event.x - self._drag_x
+        y = self.window.winfo_y() + event.y - self._drag_y
+        self.window.geometry(f"+{x}+{y}")
 
     def _add_message(self, sender: str, text: str, is_bot: bool = False):
         """Add a message to the chat display."""
