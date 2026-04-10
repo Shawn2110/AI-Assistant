@@ -29,5 +29,8 @@ models/
 *.log
 logs/
 
+# Auth tokens (sensitive - never commit)
+config/tokens/
+
 # Tunnel
 ngrok.yml

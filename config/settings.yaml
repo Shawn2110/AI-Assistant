@@ -1,34 +1,42 @@
 # ============================================================
-# AI Assistant - Configuration
+# AI Assistant - Open Source Personal AI Assistant
 # ============================================================
-# A personal AI assistant that helps with daily activities.
+# An open-source AI assistant you download and run yourself.
+# Your data, your AI, your rules.
+#
+# QUICK START:
+#   1. Run: python -m src --setup
+#   2. Pick your AI provider (bring your own API key or run local)
+#   3. Enable integrations you want
+#   4. Run: python -m src
 #
 # FEATURES:
-#   - Voice Commands: Talk to your assistant like Siri/Bixby
-#   - Multiple AI Providers: Choose from Groq, Gemini, Ollama (Qwen),
-#     Claude, or OpenAI — switch anytime
-#   - App Control: Open/close apps, manage files, adjust system settings
+#   - Chatbot: Conversational AI assistant
+#   - Voice Commands: Talk to it like Siri/Bixby
+#   - Notification Hub: Get updates from all your connected apps
+#   - App Control: Open/close apps, manage files, system settings
 #   - Google Suite: Gmail, Google Calendar, Google Drive
 #   - Microsoft 365: Outlook, Teams, OneDrive
-#   - Messaging: Telegram, Discord, WhatsApp, Slack
-#   - Design: Figma (view projects, export assets, get comments)
+#   - Messaging: Telegram, Discord, WhatsApp, Slack, Instagram
+#   - Design: Figma (projects, assets, comments)
 #   - Browser Automation: Search, navigate, fill forms
 #   - Remote Access: Control your laptop from your phone
-#   - Desktop & Mobile App: .NET MAUI app for Windows, Android, iOS
+#   - Desktop & Mobile App: .NET MAUI (Windows, Android, iOS)
 #
-# SUPPORTED AI PROVIDERS:
-#   - Groq (FREE): Llama 3, Mixtral — fastest free API
-#   - Google Gemini (FREE): Gemini 2.0 Flash
-#   - Ollama/Qwen (FREE, LOCAL): Run AI on your own machine, fully offline
-#   - Claude (PAID): Anthropic's Claude — best for coding and analysis
-#   - OpenAI (PAID): GPT-4o — versatile, widely used
+# AI PROVIDERS (bring your own key or run locally):
+#   - Ollama (FREE, LOCAL): Qwen, Llama, Mistral — runs on your machine
+#   - Groq (FREE, CLOUD): Llama 3 — fast free API, you provide the key
+#   - Gemini (FREE, CLOUD): Google Gemini 2.0 Flash
+#   - Claude (PAID): Anthropic Claude — you provide your API key
+#   - OpenAI (PAID): GPT-4o — you provide your API key
+#   - Custom: Any OpenAI-compatible server (LM Studio, vLLM, LocalAI)
 #
-# SETUP:
-#   1. Copy .env.example to .env and add your API keys
-#   2. Run `assistant setup` to choose your AI provider
-#   3. Run `assistant` to start in CLI mode
-#   4. Run `assistant --voice` to start with voice commands
-#   5. Run `assistant --server` to start the server for phone access
+# PRIVACY:
+#   - All processing runs on YOUR machine
+#   - API keys are stored locally in your .env file
+#   - Auth tokens stored locally in config/tokens/
+#   - Cloud AI providers only used if YOU choose them
+#   - Reply-to-message is opt-in with privacy warning
 # ============================================================
 
 A:
@@ -36,20 +44,25 @@ A:
   wake_word: "hey assistant"
   personality: "You are a helpful personal AI assistant. Be concise, friendly, and action-oriented."
 
-# AI Provider - user selects which to use
+# AI Provider — one active provider at a time
+# Change via CLI: python -m src --setup
 ai:
-  active_provider: null    # Set during setup: groq | gemini | ollama | claude | openai
-  # Optional: use different providers for specific tasks
-  # overrides:
-  #   coding: claude
-  #   creative: openai
+  active_provider: null    # Set during setup
   fallback_chain:
+    - ollama               # Local fallback
     - groq
-    - gemini
-    - ollama
 
-# Available AI providers
+# Available AI providers (user picks ONE as default, can switch anytime)
 providers:
+  ollama:
+    enabled: false
+    model: "qwen3:8b"
+    base_url: "http://localhost:11434"
+    max_tokens: 4096
+    temperature: 0.7
+    tier: free
+    description: "Local AI (Qwen/Llama/Mistral) — fully offline, your data stays on your machine"
+
   groq:
     enabled: false
     api_key_env: "GROQ_API_KEY"
@@ -57,7 +70,7 @@ providers:
     max_tokens: 4096
     temperature: 0.7
     tier: free
-    description: "Fast free AI via Groq (Llama 3, Mixtral)"
+    description: "Fast free cloud AI via Groq (Llama 3)"
 
   gemini:
     enabled: false
@@ -66,16 +79,7 @@ providers:
     max_tokens: 4096
     temperature: 0.7
     tier: free
-    description: "Google's free AI model (Gemini 2.0 Flash)"
-
-  ollama:
-    enabled: false
-    model: "qwen3:8b"
-    base_url: "http://localhost:11434"
-    max_tokens: 4096
-    temperature: 0.7
-    tier: free
-    description: "Local AI via Ollama — Qwen, Llama, Mistral. Runs offline on your machine."
+    description: "Google Gemini 2.0 Flash (free tier)"
 
   claude:
     enabled: false
@@ -84,7 +88,7 @@ providers:
     max_tokens: 4096
     temperature: 0.7
     tier: paid
-    description: "Anthropic's Claude — excellent for coding, analysis, and reasoning"
+    description: "Anthropic Claude — best for coding and reasoning"
 
   openai:
     enabled: false
@@ -93,7 +97,13 @@ providers:
     max_tokens: 4096
     temperature: 0.7
     tier: paid
-    description: "OpenAI's GPT-4o — versatile, widely used"
+    description: "OpenAI GPT-4o — versatile, widely used"
+
+# To add a custom open-source provider, run: python -m src --setup
+# and select "Add custom provider". It supports any OpenAI-compatible
+# API endpoint (LM Studio, vLLM, LocalAI, text-generation-webui, etc.)
+# Custom providers are added here automatically by the setup wizard.
+custom_providers: {}
 
 # Voice
 voice:
@@ -132,6 +142,8 @@ integrations:
     enabled: false
   whatsapp:
     enabled: false
+  instagram:
+    enabled: false           # Instagram DMs, comments, notifications
   slack:
     enabled: false           # Slack messaging and workspace management
   figma:

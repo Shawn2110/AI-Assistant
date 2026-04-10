@@ -16,7 +16,12 @@ log = get_logger(__name__)
 
 
 def create_provider(name: str, config: ProviderConfig) -> BaseChatModel:
-    """Create a LangChain chat model from provider name and config."""
+    """Create a LangChain chat model from provider name and config.
+
+    Built-in providers: groq, gemini, ollama, claude, openai.
+    Any other name is treated as a custom OpenAI-compatible provider
+    (LM Studio, vLLM, LocalAI, text-generation-webui, etc.)
+    """
     match name:
         case "groq":
             return _create_groq(config)
@@ -29,7 +34,8 @@ def create_provider(name: str, config: ProviderConfig) -> BaseChatModel:
         case "openai":
             return _create_openai(config)
         case _:
-            raise ProviderNotAvailableError(name, f"Unknown provider: {name}")
+            # Custom provider — treat as OpenAI-compatible endpoint
+            return _create_custom(name, config)
 
 
 def _create_groq(config: ProviderConfig) -> BaseChatModel:
@@ -117,6 +123,36 @@ def _create_openai(config: ProviderConfig) -> BaseChatModel:
     return ChatOpenAI(
         model=config.model,
         api_key=api_key,
+        max_tokens=config.max_tokens,
+        temperature=config.temperature,
+    )
+
+
+def _create_custom(name: str, config: ProviderConfig) -> BaseChatModel:
+    """Create a custom provider using any OpenAI-compatible endpoint.
+
+    Works with LM Studio, vLLM, LocalAI, text-generation-webui, llama.cpp, etc.
+    """
+    try:
+        from langchain_openai import ChatOpenAI
+    except ImportError:
+        raise ProviderError(
+            name, "Install langchain-openai: pip install langchain-openai"
+        )
+
+    if not config.base_url:
+        raise ProviderError(
+            name, f"Custom provider '{name}' needs a base_url (e.g., http://localhost:1234/v1)"
+        )
+
+    # API key is optional for local servers
+    api_key = config.api_key or "not-needed"
+
+    log.info("ai.provider.custom", name=name, base_url=config.base_url, model=config.model)
+    return ChatOpenAI(
+        model=config.model,
+        api_key=api_key,
+        base_url=config.base_url,
         max_tokens=config.max_tokens,
         temperature=config.temperature,
     )

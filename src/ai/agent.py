@@ -46,9 +46,10 @@ class AssistantAgent:
 
         name = provider_name
         if not name:
-            name, _ = self.settings.get_provider_for_category("general")
+            name, _ = self.settings.get_provider_for_task()
 
-        config = self.settings.providers[name]
+        all_provs = self.settings.all_providers
+        config = all_provs[name]
         self._llm = create_provider(name, config)
         self._provider_name = name
 

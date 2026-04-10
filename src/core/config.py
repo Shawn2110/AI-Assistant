@@ -37,8 +37,10 @@ class ProviderConfig(BaseModel):
 
 class AIConfig(BaseModel):
     active_provider: str | None = None
-    overrides: dict[str, str] = Field(default_factory=dict)
-    fallback_chain: list[str] = Field(default_factory=lambda: ["groq", "gemini", "ollama"])
+    fallback_chain: list[str] = Field(default_factory=lambda: ["ollama", "groq"])
+    # Advanced: optional per-task provider routing
+    # e.g., {"coding": "claude", "research": "groq", "email": "gemini"}
+    task_routing: dict[str, str] = Field(default_factory=dict)
 
 
 class VoiceConfig(BaseModel):
@@ -72,50 +74,76 @@ class IntegrationToggle(BaseModel):
     enabled: bool = False
 
 
+class VoiceAutomation(BaseModel):
+    enabled: bool = False
+    trigger: str = ""
+    action: str = ""
+    provider: str | None = None
+    custom: bool = False
+
+
 class Settings(BaseModel):
     assistant: AssistantInfo = Field(default_factory=AssistantInfo, alias="A")
     ai: AIConfig = Field(default_factory=AIConfig)
     providers: dict[str, ProviderConfig] = Field(default_factory=dict)
+    custom_providers: dict[str, ProviderConfig] = Field(default_factory=dict)
     voice: VoiceConfig = Field(default_factory=VoiceConfig)
     server: ServerConfig = Field(default_factory=ServerConfig)
     tunnel: TunnelConfig = Field(default_factory=TunnelConfig)
     integrations: dict[str, IntegrationToggle] = Field(default_factory=dict)
+    voice_automations: dict[str, VoiceAutomation] = Field(default_factory=dict)
 
     model_config = {"populate_by_name": True}
 
-    def get_active_provider(self) -> ProviderConfig:
-        """Get the currently active AI provider config."""
+    @property
+    def all_providers(self) -> dict[str, ProviderConfig]:
+        """All providers including custom ones."""
+        return {**self.providers, **self.custom_providers}
+
+    def get_active_provider(self) -> tuple[str, ProviderConfig]:
+        """Get the currently active AI provider name and config."""
         name = self.ai.active_provider
-        if not name or name not in self.providers:
+        all_provs = self.all_providers
+        if not name or name not in all_provs:
             raise ValueError(
-                f"No active provider set. Run 'assistant setup' to choose one. "
-                f"Available: {list(self.providers.keys())}"
+                f"No active provider set. Run 'python -m src --setup' to choose one. "
+                f"Available: {list(all_provs.keys())}"
             )
-        provider = self.providers[name]
+        provider = all_provs[name]
         if not provider.enabled:
-            raise ValueError(f"Provider '{name}' is not enabled. Enable it in settings.yaml.")
-        return provider
+            raise ValueError(f"Provider '{name}' is not enabled.")
+        return name, provider
 
-    def get_provider_for_category(self, category: str) -> tuple[str, ProviderConfig]:
-        """Get the provider name and config for a task category."""
-        # Check overrides first
-        override_name = self.ai.overrides.get(category)
-        if override_name and override_name in self.providers:
-            provider = self.providers[override_name]
-            if provider.enabled:
-                return override_name, provider
+    def get_provider_for_task(self, task_type: str | None = None) -> tuple[str, ProviderConfig]:
+        """Get the best provider for a task type.
 
-        # Fall back to active provider
-        name = self.ai.active_provider
-        if name and name in self.providers and self.providers[name].enabled:
-            return name, self.providers[name]
+        If task_routing is configured and has a match, uses that provider.
+        Otherwise falls back to the active provider → fallback chain.
+        """
+        all_provs = self.all_providers
 
-        # Try fallback chain
+        # Check task routing (advanced: user assigns different AIs to tasks)
+        if task_type and self.ai.task_routing:
+            routed = self.ai.task_routing.get(task_type)
+            if routed and routed in all_provs and all_provs[routed].enabled:
+                return routed, all_provs[routed]
+
+        # Active provider
+        active = self.ai.active_provider
+        if active and active in all_provs and all_provs[active].enabled:
+            return active, all_provs[active]
+
+        # Fallback chain
         for name in self.ai.fallback_chain:
-            if name in self.providers and self.providers[name].enabled:
-                return name, self.providers[name]
+            if name in all_provs and all_provs[name].enabled:
+                return name, all_provs[name]
 
-        raise ValueError("No AI provider available. Run 'assistant setup' to configure one.")
+        # Any enabled
+        for name, config in all_provs.items():
+            if config.enabled:
+                return name, config
+
+        raise ValueError("No AI provider available. Run 'python -m src --setup' to configure one.")
 
     def get_enabled_providers(self) -> dict[str, ProviderConfig]:
         """Get all enabled providers."""
