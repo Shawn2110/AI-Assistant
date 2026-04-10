@@ -93,11 +93,11 @@ def run_oauth_flow(
     server.shutdown()
 
     if "code" not in auth_code:
-        print("  ❌ Authorization timed out.")
+        print("  [X] Authorization timed out.")
         return None
 
     if "error" in auth_code:
-        print(f"  ❌ Authorization failed: {auth_code['error']}")
+        print(f"  [X] Authorization failed: {auth_code['error']}")
         return None
 
     # Exchange code for tokens
@@ -117,7 +117,7 @@ def run_oauth_flow(
         response.raise_for_status()
         tokens = response.json()
     except Exception as e:
-        print(f"  ❌ Token exchange failed: {e}")
+        print(f"  [X] Token exchange failed: {e}")
         return None
 
     # Store tokens
@@ -126,7 +126,7 @@ def run_oauth_flow(
     tokens["_created_at"] = int(time.time())
     token_path.write_text(json.dumps(tokens, indent=2))
 
-    print(f"  ✅ {integration_name} authorized successfully!")
+    print(f"  [OK] {integration_name} authorized successfully!")
     log.info("auth.oauth.success", integration=integration_name)
     return tokens
 
@@ -155,7 +155,7 @@ def run_bot_token_flow(integration_name: str, url: str, instructions: str) -> st
         "_created_at": int(time.time()),
     }, indent=2))
 
-    print(f"  ✅ {integration_name} token saved!")
+    print(f"  [OK] {integration_name} token saved!")
     return token
 
 

@@ -187,7 +187,7 @@ def list_files(directory: str = ".") -> str:
         items = sorted(path.iterdir(), key=lambda p: (not p.is_dir(), p.name.lower()))
         result = [f"Contents of {path}:\n"]
         for item in items[:50]:
-            prefix = "📁" if item.is_dir() else "📄"
+            prefix = "[D]" if item.is_dir() else "[F]"
             result.append(f"  {prefix} {item.name}")
 
         total = sum(1 for _ in path.iterdir())
@@ -220,7 +220,7 @@ def search_files(query: str, directory: str = ".") -> str:
 
         result = [f"Found {len(matches)} file(s) matching '{query}':\n"]
         for match in matches:
-            result.append(f"  📄 {match}")
+            result.append(f"  [F] {match}")
         return "\n".join(result)
     except Exception as e:
         return f"Error searching files: {e}"

@@ -17,7 +17,7 @@ import yaml
 
 from src.core.config import CONFIG_DIR, ROOT_DIR
 
-# ─── Integration metadata ──────────────────────────────────────────
+# --- Integration metadata ------------------------------------------
 
 INTEGRATION_INFO = {
     "system": {
@@ -173,7 +173,7 @@ INTEGRATION_INFO = {
     },
 }
 
-# ─── Voice automation presets ───────────────────────────────────────
+# --- Voice automation presets ---------------------------------------
 
 VOICE_AUTOMATION_PRESETS = {
     "reply_messages": {
@@ -182,7 +182,7 @@ VOICE_AUTOMATION_PRESETS = {
                        "message and drafts a reply for your approval",
         "trigger": "reply to *",
         "requires_integrations": ["telegram", "discord", "whatsapp", "slack"],
-        "action": "read_latest_message → draft_reply → confirm → send",
+        "action": "read_latest_message ->draft_reply ->confirm ->send",
     },
     "morning_briefing": {
         "label": "Morning briefing",
@@ -190,42 +190,42 @@ VOICE_AUTOMATION_PRESETS = {
                        "and pending Slack messages",
         "trigger": "good morning | morning briefing",
         "requires_integrations": ["google", "microsoft", "slack"],
-        "action": "read_calendar_today → count_unread_email → summarize_slack → speak",
+        "action": "read_calendar_today ->count_unread_email ->summarize_slack ->speak",
     },
     "slack_reminder": {
         "label": "Set Slack reminders by voice",
         "description": "Say 'remind me on slack to [task] at [time]' to create a Slack reminder",
         "trigger": "remind me on slack *",
         "requires_integrations": ["slack"],
-        "action": "parse_time → create_slack_reminder",
+        "action": "parse_time ->create_slack_reminder",
     },
     "send_message": {
         "label": "Send messages by voice",
         "description": "Say 'send a message to [person] on [platform] saying [text]'",
         "trigger": "send * message to * on * saying *",
         "requires_integrations": ["telegram", "discord", "whatsapp", "slack"],
-        "action": "resolve_contact → compose_message → confirm → send",
+        "action": "resolve_contact ->compose_message ->confirm ->send",
     },
     "email_summary": {
         "label": "Email summary",
         "description": "Say 'summarize my emails' to hear a summary of unread emails",
         "trigger": "summarize my emails | check my email | any new emails",
         "requires_integrations": ["google", "microsoft"],
-        "action": "fetch_unread → summarize_with_ai → speak",
+        "action": "fetch_unread ->summarize_with_ai ->speak",
     },
     "system_control": {
         "label": "System control by voice",
         "description": "Say 'open chrome', 'shutdown in 10 minutes', 'set volume to 50'",
         "trigger": "open * | close * | shutdown * | restart * | volume *",
         "requires_integrations": ["system"],
-        "action": "parse_command → execute_system_tool",
+        "action": "parse_command ->execute_system_tool",
     },
     "figma_updates": {
         "label": "Figma project updates",
         "description": "Say 'check figma comments' to hear new comments on your designs",
         "trigger": "check figma * | figma comments | figma updates",
         "requires_integrations": ["figma"],
-        "action": "fetch_recent_comments → summarize → speak",
+        "action": "fetch_recent_comments ->summarize ->speak",
     },
     "focus_mode": {
         "label": "Focus mode",
@@ -233,7 +233,7 @@ VOICE_AUTOMATION_PRESETS = {
                        "and block distracting apps",
         "trigger": "focus mode | do not disturb | dnd",
         "requires_integrations": ["slack", "system"],
-        "action": "set_slack_dnd → update_slack_status → close_distracting_apps",
+        "action": "set_slack_dnd ->update_slack_status ->close_distracting_apps",
     },
     "meeting_prep": {
         "label": "Meeting preparation",
@@ -241,7 +241,7 @@ VOICE_AUTOMATION_PRESETS = {
                        "relevant documents",
         "trigger": "prepare for * meeting | next meeting | meeting prep",
         "requires_integrations": ["google", "microsoft"],
-        "action": "get_next_event → list_attendees → find_related_docs → speak_summary",
+        "action": "get_next_event ->list_attendees ->find_related_docs ->speak_summary",
     },
     "end_of_day": {
         "label": "End of day wrap-up",
@@ -249,12 +249,12 @@ VOICE_AUTOMATION_PRESETS = {
                        "reminders for tomorrow",
         "trigger": "wrap up | end of day | eod",
         "requires_integrations": ["google", "microsoft", "slack"],
-        "action": "summarize_today → list_tomorrow_events → speak",
+        "action": "summarize_today ->list_tomorrow_events ->speak",
     },
 }
 
 
-# ─── Main setup flow ───────────────────────────────────────────────
+# --- Main setup flow -----------------------------------------------
 
 def run_setup() -> None:
     """Full interactive setup wizard."""
@@ -276,14 +276,14 @@ def run_setup() -> None:
 
     # Main menu loop
     while True:
-        print("\n── Main Menu ───────────────────────────────────────\n")
-        print("  1. AI Provider        — Choose which AI to use")
-        print("  2. Add Custom AI      — Add any open-source model server")
-        print("  3. Integrations       — Connect apps and services")
-        print("  4. Voice Automations  — Set up voice command workflows")
-        print("  5. Task Routing       — Assign different AIs to different tasks")
-        print("  6. View Config        — Show current configuration")
-        print("  7. Done               — Save and exit setup")
+        print("\n-- Main Menu ---------------------------------------\n")
+        print("  1. AI Provider        -Choose which AI to use")
+        print("  2. Add Custom AI      -Add any open-source model server")
+        print("  3. Integrations       -Connect apps and services")
+        print("  4. Voice Automations  -Set up voice command workflows")
+        print("  5. Task Routing       -Assign different AIs to different tasks")
+        print("  6. View Config        -Show current configuration")
+        print("  7. Done               -Save and exit setup")
         print()
 
         choice = _input_choice("  Select (1-7): ", range(1, 8))
@@ -311,7 +311,7 @@ def run_setup() -> None:
     _print_finish(settings)
 
 
-# ─── Section 1: AI Providers ──────────────────────────────────────
+# --- Section 1: AI Providers --------------------------------------
 
 def _setup_providers(settings: dict, env_path: Path) -> None:
     """Configure AI providers and API keys."""
@@ -319,7 +319,7 @@ def _setup_providers(settings: dict, env_path: Path) -> None:
     providers = {**settings.get("providers", {}), **settings.get("custom_providers", {})}
     provider_list = list(providers.keys())
 
-    print("\n── AI Provider Setup ────────────────────────────────\n")
+    print("\n-- AI Provider Setup --------------------------------\n")
     print("  Choose which AI provider to use. Bring your own API key\n"
           "  for cloud providers, or run open-source models locally.\n")
 
@@ -327,7 +327,7 @@ def _setup_providers(settings: dict, env_path: Path) -> None:
         tier = config.get("tier", "free").upper()
         desc = config.get("description", "")
         enabled = "ON " if config.get("enabled") else "OFF"
-        active = " ← active" if settings["ai"].get("active_provider") == name else ""
+        active = " <- active" if settings["ai"].get("active_provider") == name else ""
         is_custom = name in settings.get("custom_providers", {})
         tag = " [CUSTOM]" if is_custom else ""
 
@@ -335,7 +335,7 @@ def _setup_providers(settings: dict, env_path: Path) -> None:
         key_status = ""
         if key_env:
             has_key = _env_has_key(env_path, key_env)
-            key_status = " [key: ✅]" if has_key else " [key: ❌]"
+            key_status = " [key: [OK]]" if has_key else " [key: [X]]"
         elif name == "ollama" or config.get("base_url"):
             key_status = " [local]"
 
@@ -359,14 +359,14 @@ def _setup_providers(settings: dict, env_path: Path) -> None:
     toggle = input(f"\n  {name} is {'ON' if current else 'OFF'}. Toggle? (y/N): ").strip().lower()
     if toggle == "y":
         config["enabled"] = not current
-        print(f"  → {name} is now {'ON' if config['enabled'] else 'OFF'}")
+        print(f"  ->{name} is now {'ON' if config['enabled'] else 'OFF'}")
 
     # Set as active?
     if config.get("enabled"):
         make_active = input(f"  Set {name} as your primary AI provider? (y/N): ").strip().lower()
         if make_active == "y":
             settings["ai"]["active_provider"] = name
-            print(f"  → {name} is now your active provider")
+            print(f"  ->{name} is now your active provider")
 
     # API key
     key_env = config.get("api_key_env", "")
@@ -388,7 +388,7 @@ def _setup_providers(settings: dict, env_path: Path) -> None:
         new_model = input("  Change model? (enter name or press Enter to keep): ").strip()
         if new_model:
             config["model"] = new_model
-            print(f"  → Model set to: {new_model}")
+            print(f"  ->Model set to: {new_model}")
         print("\n  Make sure Ollama is installed: https://ollama.com")
         print(f"  Run: ollama pull {config['model']}")
 
@@ -398,23 +398,23 @@ def _setup_providers(settings: dict, env_path: Path) -> None:
         _setup_providers(settings, env_path)
 
 
-# ─── Section 1b: Custom AI Provider ──────────────────────────────
+# --- Section 1b: Custom AI Provider ------------------------------
 
 def _add_custom_provider(settings: dict, env_path: Path) -> None:
     """Add a custom open-source AI provider (any OpenAI-compatible endpoint)."""
     if "custom_providers" not in settings:
         settings["custom_providers"] = {}
 
-    print("\n── Add Custom AI Provider ──────────────────────────\n")
+    print("\n-- Add Custom AI Provider --------------------------\n")
     print("  Add any open-source model running locally or remotely.")
     print("  Supports any OpenAI-compatible API endpoint:\n")
-    print("    • LM Studio     (http://localhost:1234/v1)")
-    print("    • Ollama         (http://localhost:11434/v1)")
-    print("    • vLLM           (http://localhost:8000/v1)")
-    print("    • LocalAI        (http://localhost:8080/v1)")
-    print("    • text-gen-webui (http://localhost:5000/v1)")
-    print("    • llama.cpp      (http://localhost:8080/v1)")
-    print("    • Any other OpenAI-compatible server")
+    print("    - LM Studio     (http://localhost:1234/v1)")
+    print("    - Ollama         (http://localhost:11434/v1)")
+    print("    - vLLM           (http://localhost:8000/v1)")
+    print("    - LocalAI        (http://localhost:8080/v1)")
+    print("    - text-gen-webui (http://localhost:5000/v1)")
+    print("    - llama.cpp      (http://localhost:8080/v1)")
+    print("    - Any other OpenAI-compatible server")
     print()
 
     # Show existing custom providers
@@ -423,7 +423,7 @@ def _add_custom_provider(settings: dict, env_path: Path) -> None:
         print("  Current custom providers:")
         for name, config in existing.items():
             status = "ON" if config.get("enabled") else "OFF"
-            print(f"    [{status}] {name} → {config.get('base_url', '')} ({config.get('model', '')})")
+            print(f"    [{status}] {name} ->{config.get('base_url', '')} ({config.get('model', '')})")
         print()
 
     name = input("  Provider name (short, e.g., 'lmstudio', 'vllm'): ").strip().lower()
@@ -464,9 +464,9 @@ def _add_custom_provider(settings: dict, env_path: Path) -> None:
     make_active = input(f"\n  Set '{name}' as your active AI provider? (y/N): ").strip().lower()
     if make_active == "y":
         settings["ai"]["active_provider"] = name
-        print(f"  → '{name}' is now your active provider")
+        print(f"  ->'{name}' is now your active provider")
 
-    print(f"\n  ✅ Custom provider '{name}' added!")
+    print(f"\n  [OK] Custom provider '{name}' added!")
     print(f"     URL: {base_url}")
     print(f"     Model: {model}")
 
@@ -475,13 +475,13 @@ def _add_custom_provider(settings: dict, env_path: Path) -> None:
         _add_custom_provider(settings, env_path)
 
 
-# ─── Section 2: Integrations ─────────────────────────────────────
+# --- Section 2: Integrations -------------------------------------
 
 def _setup_integrations(settings: dict, env_path: Path) -> None:
     """Configure which integrations to enable and their credentials."""
     integrations = settings.get("integrations", {})
 
-    print("\n── Integration Setup ────────────────────────────────\n")
+    print("\n-- Integration Setup --------------------------------\n")
     print("  Choose which apps and services to connect.\n")
 
     int_list = list(integrations.keys())
@@ -495,7 +495,7 @@ def _setup_integrations(settings: dict, env_path: Path) -> None:
         keys_needed = info.get("requires_keys", [])
         if keys_needed:
             keys_ok = all(_env_has_key(env_path, k) for k in keys_needed)
-            key_status = " [auth: ✅]" if keys_ok else " [auth: ❌]"
+            key_status = " [auth: [OK]]" if keys_ok else " [auth: [X]]"
         else:
             key_status = ""
 
@@ -515,7 +515,7 @@ def _setup_integrations(settings: dict, env_path: Path) -> None:
     info = INTEGRATION_INFO.get(name, {})
     label = info.get("label", name.title())
 
-    print(f"\n  ── {label} ──\n")
+    print(f"\n  -- {label} --\n")
     print(f"  {info.get('description', '')}\n")
 
     # Show capabilities
@@ -524,7 +524,7 @@ def _setup_integrations(settings: dict, env_path: Path) -> None:
         print("  What it can do:")
         for cap in caps:
             readable = cap.replace("_", " ").title()
-            print(f"    • {readable}")
+            print(f"    - {readable}")
         print()
 
     # Toggle
@@ -532,7 +532,7 @@ def _setup_integrations(settings: dict, env_path: Path) -> None:
     toggle = input(f"  {label} is {'ON' if current else 'OFF'}. Toggle? (y/N): ").strip().lower()
     if toggle == "y":
         integrations[name]["enabled"] = not current
-        print(f"  → {label} is now {'ON' if integrations[name]['enabled'] else 'OFF'}")
+        print(f"  ->{label} is now {'ON' if integrations[name]['enabled'] else 'OFF'}")
 
     # Setup auth if needed and enabled
     if integrations[name].get("enabled"):
@@ -541,7 +541,7 @@ def _setup_integrations(settings: dict, env_path: Path) -> None:
 
         if auth_type == "oauth":
             if has_valid_token(name):
-                print("  ✅ Already authorized.")
+                print("  [OK] Already authorized.")
                 reauth = input("  Re-authorize? (y/N): ").strip().lower()
                 if reauth != "y":
                     pass
@@ -549,14 +549,14 @@ def _setup_integrations(settings: dict, env_path: Path) -> None:
                     _run_integration_auth(name, info, env_path)
             else:
                 print(f"\n  {label} needs authorization.")
-                print("  I'll open your browser to authorize — just click 'Allow'.")
+                print("  I'll open your browser to authorize -just click 'Allow'.")
                 proceed = input("  Proceed with authorization? (Y/n): ").strip().lower()
                 if proceed != "n":
                     _run_integration_auth(name, info, env_path)
 
         elif auth_type == "bot_token":
             if has_valid_token(name):
-                print("  ✅ Bot token is configured.")
+                print("  [OK] Bot token is configured.")
                 change = input("  Change it? (y/N): ").strip().lower()
                 if change == "y":
                     auto = info.get("auto_setup", {})
@@ -571,7 +571,7 @@ def _setup_integrations(settings: dict, env_path: Path) -> None:
         _setup_integrations(settings, env_path)
 
 
-# ─── Section 3: Voice Automations ────────────────────────────────
+# --- Section 3: Voice Automations --------------------------------
 
 def _setup_voice_automations(settings: dict) -> None:
     """Configure voice command automations."""
@@ -584,7 +584,7 @@ def _setup_voice_automations(settings: dict) -> None:
         k for k, v in settings.get("integrations", {}).items() if v.get("enabled")
     }
 
-    print("\n── Voice Automation Setup ───────────────────────────\n")
+    print("\n-- Voice Automation Setup ---------------------------\n")
     print("  Set up what your assistant does when you say specific things.\n")
 
     preset_list = list(VOICE_AUTOMATION_PRESETS.keys())
@@ -594,7 +594,7 @@ def _setup_voice_automations(settings: dict) -> None:
         # Check if required integrations are enabled
         required = set(preset.get("requires_integrations", []))
         has_deps = required.issubset(enabled_integrations) if required else True
-        dep_status = "" if has_deps else " ⚠️  needs: " + ", ".join(required - enabled_integrations)
+        dep_status = "" if has_deps else " [!]needs: " + ", ".join(required - enabled_integrations)
 
         print(f"  {i}. [{enabled}] {preset['label']}")
         print(f"       Trigger: \"{preset['trigger']}\"")
@@ -624,10 +624,10 @@ def _setup_voice_automations(settings: dict) -> None:
     required = set(preset.get("requires_integrations", []))
     missing = required - enabled_integrations
     if missing:
-        print(f"\n  ⚠️  This automation requires these integrations to be enabled first:")
+        print(f"\n  [!]This automation requires these integrations to be enabled first:")
         for m in missing:
             label = INTEGRATION_INFO.get(m, {}).get("label", m)
-            print(f"       • {label}")
+            print(f"       - {label}")
         print("  Go to 'Integrations' in the main menu to enable them.")
         input("\n  Press Enter to continue...")
         _setup_voice_automations(settings)
@@ -646,7 +646,7 @@ def _setup_voice_automations(settings: dict) -> None:
         active_automations[key]["trigger"] = preset["trigger"]
         active_automations[key]["action"] = preset["action"]
         status = "ON" if active_automations[key]["enabled"] else "OFF"
-        print(f"  → '{preset['label']}' is now {status}")
+        print(f"  ->'{preset['label']}' is now {status}")
 
     # Custom trigger phrase?
     if active_automations.get(key, {}).get("enabled"):
@@ -656,7 +656,7 @@ def _setup_voice_automations(settings: dict) -> None:
         ).strip()
         if custom:
             active_automations[key]["trigger"] = custom
-            print(f"  → Trigger set to: \"{custom}\"")
+            print(f"  ->Trigger set to: \"{custom}\"")
 
     # Configure provider for this automation?
     change_provider = input(
@@ -672,7 +672,7 @@ def _setup_voice_automations(settings: dict) -> None:
             prov = input("  Provider name: ").strip().lower()
             if prov in enabled_providers:
                 active_automations[key]["provider"] = prov
-                print(f"  → This automation will use: {prov}")
+                print(f"  ->This automation will use: {prov}")
 
     another = input("\n  Configure another automation? (y/N): ").strip().lower()
     if another == "y":
@@ -684,7 +684,7 @@ def _add_custom_automation(settings: dict) -> None:
     if "voice_automations" not in settings:
         settings["voice_automations"] = {}
 
-    print("\n  ── Custom Voice Automation ──\n")
+    print("\n  -- Custom Voice Automation --\n")
     print("  Define a voice trigger and what the assistant should do.\n")
     print("  Examples:")
     print("    Trigger: 'check my portfolio'")
@@ -714,11 +714,11 @@ def _add_custom_automation(settings: dict) -> None:
         "custom": True,
     }
 
-    print(f"\n  ✅ Custom automation '{name}' created!")
-    print(f"     Say \"{trigger}\" → {action}")
+    print(f"\n  [OK] Custom automation '{name}' created!")
+    print(f"     Say \"{trigger}\" ->{action}")
 
 
-# ─── Section 4: Provider Routing ─────────────────────────────────
+# --- Section 4: Provider Routing ---------------------------------
 
 def _setup_task_routing(settings: dict) -> None:
     """Advanced: assign different AI providers to different task types.
@@ -741,7 +741,7 @@ def _setup_task_routing(settings: dict) -> None:
 
     routing = settings["ai"]["task_routing"]
 
-    print("\n── Task Routing (Advanced) ──────────────────────────\n")
+    print("\n-- Task Routing (Advanced) --------------------------\n")
     print("  Assign different AI providers to different tasks.")
     print("  Leave unset to use your default provider for that task.\n")
     print(f"  Default provider: {settings['ai'].get('active_provider', 'not set')}")
@@ -763,7 +763,7 @@ def _setup_task_routing(settings: dict) -> None:
     for i, (cat, desc) in enumerate(categories, 1):
         current = routing.get(cat, default)
         marker = " *" if cat in routing else ""
-        print(f"  {i}. {cat:<18} → {current:<12} ({desc}){marker}")
+        print(f"  {i}. {cat:<18} ->{current:<12} ({desc}){marker}")
 
     print(f"\n  {len(categories) + 1}. Clear all routing (use default for everything)")
     print(f"  {len(categories) + 2}. Back to main menu")
@@ -779,7 +779,7 @@ def _setup_task_routing(settings: dict) -> None:
 
     if choice == len(categories) + 1:
         settings["ai"]["task_routing"] = {}
-        print("  → All routing cleared. Default provider handles everything.")
+        print("  ->All routing cleared. Default provider handles everything.")
         return
 
     cat_key, cat_desc = categories[choice - 1]
@@ -789,10 +789,10 @@ def _setup_task_routing(settings: dict) -> None:
     provider = input("  Assign provider (or 'default' to remove): ").strip().lower()
     if provider == "default":
         routing.pop(cat_key, None)
-        print(f"  → {cat_key} will use the default provider")
+        print(f"  ->{cat_key} will use the default provider")
     elif provider in enabled_providers:
         routing[cat_key] = provider
-        print(f"  → {cat_key} will now use: {provider}")
+        print(f"  ->{cat_key} will now use: {provider}")
     else:
         print(f"  Unknown. Available: {', '.join(enabled_providers)}")
 
@@ -801,11 +801,11 @@ def _setup_task_routing(settings: dict) -> None:
         _setup_task_routing(settings)
 
 
-# ─── Section 5: View Config ──────────────────────────────────────
+# --- Section 5: View Config --------------------------------------
 
 def _show_config(settings: dict) -> None:
     """Display current configuration summary."""
-    print("\n── Current Configuration ────────────────────────────\n")
+    print("\n-- Current Configuration ----------------------------\n")
 
     # Assistant
     a = settings.get("A", {})
@@ -838,7 +838,7 @@ def _show_config(settings: dict) -> None:
     if routing:
         print("\n  Task Routing (advanced):")
         for cat, prov in routing.items():
-            print(f"    {cat:<18} → {prov}")
+            print(f"    {cat:<18} ->{prov}")
 
     # Integrations
     print("\n  Integrations:")
@@ -856,7 +856,7 @@ def _show_config(settings: dict) -> None:
                 label = VOICE_AUTOMATION_PRESETS.get(key, {}).get("label", key)
                 trigger = auto.get("trigger", "")
                 provider = auto.get("provider", "default")
-                print(f"    [ON ] \"{trigger}\" → {label} (via {provider})")
+                print(f"    [ON ] \"{trigger}\" ->{label} (via {provider})")
 
     # Voice settings
     voice = settings.get("voice", {})
@@ -869,7 +869,7 @@ def _show_config(settings: dict) -> None:
     input("  Press Enter to continue...")
 
 
-# ─── Auth helpers ─────────────────────────────────────────────────
+# --- Auth helpers -------------------------------------------------
 
 def _run_integration_auth(name: str, info: dict, env_path: Path) -> None:
     """Run OAuth flow for an integration."""
@@ -908,10 +908,10 @@ def _run_integration_auth(name: str, info: dict, env_path: Path) -> None:
             scopes=oauth.get("scopes", []),
         )
     else:
-        print("  ❌ Missing credentials. Skipping auth flow.")
+        print("  [X] Missing credentials. Skipping auth flow.")
 
 
-# ─── Utilities ────────────────────────────────────────────────────
+# --- Utilities ----------------------------------------------------
 
 def _print_banner() -> None:
     print("\n" + "=" * 55)
@@ -920,16 +920,16 @@ def _print_banner() -> None:
     print("""
   This wizard will help you set up:
 
-    1. AI Provider — pick your AI (Ollama, Groq, Gemini,
+    1. AI Provider -pick your AI (Ollama, Groq, Gemini,
        Claude, OpenAI) or add any open-source model
 
-    2. Integrations — connect Google, Microsoft, Slack,
+    2. Integrations -connect Google, Microsoft, Slack,
        Figma, Instagram, Telegram, Discord, WhatsApp
 
-    3. Voice Automations — morning briefings, message
+    3. Voice Automations -morning briefings, message
        replies, Slack reminders, focus mode, etc.
 
-    4. Task Routing — optionally assign different AIs
+    4. Task Routing -optionally assign different AIs
        to different tasks (e.g., Claude for coding)
 
   Your data stays on your machine. Cloud AI providers
@@ -950,7 +950,7 @@ def _print_finish(settings: dict) -> None:
     )
 
     print("\n" + "=" * 55)
-    print("   Configuration saved! ✅")
+    print("   Configuration saved! [OK]")
     print("=" * 55)
     print(f"\n  AI Provider:     {active}")
     if enabled_integrations:
@@ -1002,7 +1002,7 @@ def _set_api_key(env_path: Path, key_name: str) -> None:
         lines.append(f"{key_name}={key}")
 
     env_path.write_text("\n".join(lines) + "\n")
-    print(f"  ✅ {key_name} saved to .env")
+    print(f"  [OK] {key_name} saved to .env")
 
 
 def _env_has_key(env_path: Path, key_name: str) -> bool:

@@ -24,11 +24,11 @@
 #   - Desktop & Mobile App: .NET MAUI (Windows, Android, iOS)
 #
 # AI PROVIDERS (bring your own key or run locally):
-#   - Ollama (FREE, LOCAL): Qwen, Llama, Mistral — runs on your machine
-#   - Groq (FREE, CLOUD): Llama 3 — fast free API, you provide the key
+#   - Ollama (FREE, LOCAL): Qwen, Llama, Mistral -- runs on your machine
+#   - Groq (FREE, CLOUD): Llama 3 -- fast free API, you provide the key
 #   - Gemini (FREE, CLOUD): Google Gemini 2.0 Flash
-#   - Claude (PAID): Anthropic Claude — you provide your API key
-#   - OpenAI (PAID): GPT-4o — you provide your API key
+#   - Claude (PAID): Anthropic Claude -- you provide your API key
+#   - OpenAI (PAID): GPT-4o -- you provide your API key
 #   - Custom: Any OpenAI-compatible server (LM Studio, vLLM, LocalAI)
 #
 # PRIVACY:
@@ -44,13 +44,17 @@ A:
   wake_word: "hey assistant"
   personality: "You are a helpful personal AI assistant. Be concise, friendly, and action-oriented."
 
-# AI Provider — one active provider at a time
+# AI Provider -- one active provider at a time
 # Change via CLI: python -m src --setup
 ai:
   active_provider: null    # Set during setup
   fallback_chain:
     - ollama               # Local fallback
     - groq
+  # Advanced: assign different AIs to different tasks
+  # task_routing:
+  #   coding: claude
+  #   research: groq
 
 # Available AI providers (user picks ONE as default, can switch anytime)
 providers:
@@ -61,7 +65,7 @@ providers:
     max_tokens: 4096
     temperature: 0.7
     tier: free
-    description: "Local AI (Qwen/Llama/Mistral) — fully offline, your data stays on your machine"
+    description: "Local AI (Qwen/Llama/Mistral) -- fully offline, your data stays on your machine"
 
   groq:
     enabled: false
@@ -88,7 +92,7 @@ providers:
     max_tokens: 4096
     temperature: 0.7
     tier: paid
-    description: "Anthropic Claude — best for coding and reasoning"
+    description: "Anthropic Claude -- best for coding and reasoning"
 
   openai:
     enabled: false
@@ -97,12 +101,9 @@ providers:
     max_tokens: 4096
     temperature: 0.7
     tier: paid
-    description: "OpenAI GPT-4o — versatile, widely used"
+    description: "OpenAI GPT-4o -- versatile, widely used"
 
-# To add a custom open-source provider, run: python -m src --setup
-# and select "Add custom provider". It supports any OpenAI-compatible
-# API endpoint (LM Studio, vLLM, LocalAI, text-generation-webui, etc.)
-# Custom providers are added here automatically by the setup wizard.
+# Custom providers added via: python -m src --setup -> Add Custom AI
 custom_providers: {}
 
 # Voice
@@ -121,7 +122,7 @@ server:
   cors_origins:
     - "*"
 
-# Remote access (phone → laptop over internet)
+# Remote access (phone -> laptop over internet)
 tunnel:
   enabled: false
   provider: ngrok            # ngrok | tailscale

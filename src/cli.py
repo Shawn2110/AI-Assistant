@@ -64,7 +64,7 @@ async def run_interactive(provider: str | None = None) -> None:
     agent = _create_agent()
 
     name = settings.assistant.name
-    print(f"\n🤖 {name} is ready! Type your message (or 'quit' to exit).\n")
+    print(f"\n[*]{name} is ready! Type your message (or 'quit' to exit).\n")
 
     # Show active provider
     active = settings.ai.active_provider
@@ -82,17 +82,17 @@ async def run_interactive(provider: str | None = None) -> None:
         if not user_input:
             continue
         if user_input.lower() in ("quit", "exit", "bye"):
-            print(f"\n{name}: Goodbye! 👋")
+            print(f"\n{name}: Goodbye!!")
             break
 
         try:
             response = await agent.chat(user_input, provider=provider)
             print(f"\n{name}: {response}\n")
         except AssistantError as e:
-            print(f"\n⚠️  Error: {e}\n")
+            print(f"\n[!]Error: {e}\n")
         except Exception as e:
             log.error("chat.error", error=str(e))
-            print(f"\n⚠️  Unexpected error: {e}\n")
+            print(f"\n[!]Unexpected error: {e}\n")
 
 
 def main():
