@@ -63,26 +63,31 @@ async def run_interactive(provider: str | None = None) -> None:
     settings = get_settings()
     agent = _create_agent()
 
-    name = settings.assistant.name
-    print(f"\n[*]{name} is ready! Type your message (or 'quit' to exit).\n")
+    persona = settings.persona
+    name = persona.name
+
+    # Persona greeting
+    print(f"\n  {persona.get_greeting()}")
+    print(f"  {persona.tagline}")
 
     # Show active provider
     active = settings.ai.active_provider
-    if active:
-        print(f"   Using: {active} ({settings.providers[active].model})")
-    print()
+    if active and active in settings.all_providers:
+        model = settings.all_providers[active].model
+        print(f"  [{active}: {model}]")
+    print(f"\n  Type your message, or 'quit' to exit.\n")
 
     while True:
         try:
             user_input = input("You: ").strip()
         except (KeyboardInterrupt, EOFError):
-            print("\nGoodbye!")
+            print(f"\n{name}: {persona.get_farewell()}")
             break
 
         if not user_input:
             continue
         if user_input.lower() in ("quit", "exit", "bye"):
-            print(f"\n{name}: Goodbye!!")
+            print(f"\n{name}: {persona.get_farewell()}")
             break
 
         try:

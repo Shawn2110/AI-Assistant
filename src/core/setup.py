@@ -277,31 +277,34 @@ def run_setup() -> None:
     # Main menu loop
     while True:
         print("\n-- Main Menu ---------------------------------------\n")
-        print("  1. AI Provider        -Choose which AI to use")
-        print("  2. Add Custom AI      -Add any open-source model server")
-        print("  3. Integrations       -Connect apps and services")
-        print("  4. Voice Automations  -Set up voice command workflows")
-        print("  5. Task Routing       -Assign different AIs to different tasks")
-        print("  6. View Config        -Show current configuration")
-        print("  7. Done               -Save and exit setup")
+        print("  1. Persona            -Name and personality of your assistant")
+        print("  2. AI Provider        -Choose which AI to use")
+        print("  3. Add Custom AI      -Add any open-source model server")
+        print("  4. Integrations       -Connect apps and services")
+        print("  5. Voice Automations  -Set up voice command workflows")
+        print("  6. Task Routing       -Assign different AIs to different tasks")
+        print("  7. View Config        -Show current configuration")
+        print("  8. Done               -Save and exit setup")
         print()
 
-        choice = _input_choice("  Select (1-7): ", range(1, 8))
+        choice = _input_choice("  Select (1-8): ", range(1, 9))
 
         match choice:
             case 1:
-                _setup_providers(settings, env_path)
+                _setup_persona(settings)
             case 2:
-                _add_custom_provider(settings, env_path)
+                _setup_providers(settings, env_path)
             case 3:
-                _setup_integrations(settings, env_path)
+                _add_custom_provider(settings, env_path)
             case 4:
-                _setup_voice_automations(settings)
+                _setup_integrations(settings, env_path)
             case 5:
-                _setup_task_routing(settings)
+                _setup_voice_automations(settings)
             case 6:
-                _show_config(settings)
+                _setup_task_routing(settings)
             case 7:
+                _show_config(settings)
+            case 8:
                 break
 
     # Save final config
@@ -309,6 +312,148 @@ def run_setup() -> None:
         yaml.dump(settings, f, default_flow_style=False, sort_keys=False)
 
     _print_finish(settings)
+
+
+# --- Section 0: Persona -------------------------------------------
+
+TONE_PRESETS = {
+    "professional-witty": {
+        "label": "Professional & Witty (Jarvis-style)",
+        "personality": (
+            "You are {name}, a personal AI assistant. "
+            "You speak in a professional yet witty tone, similar to Jarvis from Iron Man. "
+            "You are efficient, slightly formal, but show personality through dry humor "
+            "and clever observations. You address the user respectfully and always stay "
+            "focused on getting things done. You keep responses concise unless detail is "
+            "requested. When executing tasks, you confirm actions briefly and report results "
+            "clearly. You never say 'as an AI' or break character."
+        ),
+        "greeting": "Good {time_of_day}. {name} online. How can I assist you?",
+        "farewell": "Until next time. {name} signing off.",
+        "tagline": "At your service.",
+    },
+    "friendly": {
+        "label": "Friendly & Warm",
+        "personality": (
+            "You are {name}, a friendly personal AI assistant. "
+            "You're warm, approachable, and enthusiastic. You talk like a helpful friend "
+            "who genuinely enjoys helping out. You use casual language, occasionally crack "
+            "jokes, and celebrate wins with the user. You keep things simple and clear. "
+            "You never say 'as an AI' or break character."
+        ),
+        "greeting": "Hey! {name} here. What's up?",
+        "farewell": "Catch you later! {name} out.",
+        "tagline": "Happy to help!",
+    },
+    "formal": {
+        "label": "Formal & Precise",
+        "personality": (
+            "You are {name}, a formal personal AI assistant. "
+            "You communicate with precision, clarity, and professionalism. "
+            "You use proper grammar, avoid slang, and present information in a "
+            "structured manner. You are thorough but never verbose. "
+            "You never say 'as an AI' or break character."
+        ),
+        "greeting": "Good {time_of_day}. {name} at your disposal.",
+        "farewell": "Session concluded. {name} standing by.",
+        "tagline": "Precision in every response.",
+    },
+    "casual": {
+        "label": "Casual & Chill",
+        "personality": (
+            "You are {name}, a laid-back personal AI assistant. "
+            "You keep it super chill and conversational. You use casual language, "
+            "contractions, and a relaxed tone. You're helpful but never stiff. "
+            "Think of yourself as the user's tech-savvy buddy. "
+            "You never say 'as an AI' or break character."
+        ),
+        "greeting": "Yo, {name} here. What do you need?",
+        "farewell": "Later! {name} out.",
+        "tagline": "Just ask.",
+    },
+}
+
+
+def _setup_persona(settings: dict) -> None:
+    """Configure the assistant's persona -- name, personality, tone."""
+    if "persona" not in settings:
+        settings["persona"] = {}
+
+    persona = settings["persona"]
+    current_name = persona.get("name", "Assistant")
+
+    print("\n-- Persona Setup ---------------------------------------\n")
+    print("  Give your assistant an identity.\n")
+    print(f"  Current name: {current_name}")
+    print(f"  Current tone: {persona.get('tone', 'professional-witty')}")
+    print()
+
+    # Step 1: Name
+    new_name = input(f"  Assistant name (Enter to keep '{current_name}'): ").strip()
+    if new_name:
+        persona["name"] = new_name
+        # Auto-update wake word
+        persona["wake_word"] = f"hey {new_name.lower()}"
+        print(f"  -> Name set to: {new_name}")
+        print(f"  -> Wake word set to: 'hey {new_name.lower()}'")
+    else:
+        new_name = current_name
+
+    # Step 2: Tone
+    print("\n  Choose a personality tone:\n")
+    tone_keys = list(TONE_PRESETS.keys())
+    for i, (key, preset) in enumerate(TONE_PRESETS.items(), 1):
+        current = " <- current" if persona.get("tone") == key else ""
+        print(f"  {i}. {preset['label']}{current}")
+    print(f"  {len(tone_keys) + 1}. Custom (write your own personality)")
+    print()
+
+    choice = _input_choice(
+        f"  Select tone (1-{len(tone_keys) + 1}): ",
+        range(1, len(tone_keys) + 2),
+    )
+
+    if choice <= len(tone_keys):
+        key = tone_keys[choice - 1]
+        preset = TONE_PRESETS[key]
+        persona["tone"] = key
+        persona["personality"] = preset["personality"]
+        persona["greeting"] = preset["greeting"]
+        persona["farewell"] = preset["farewell"]
+        persona["tagline"] = preset["tagline"]
+        print(f"  -> Tone set to: {preset['label']}")
+    else:
+        # Custom personality
+        print("\n  Write a custom personality description.")
+        print("  Use {name} where you want the assistant's name inserted.")
+        print("  Example: 'You are {name}, a sarcastic but brilliant assistant...'")
+        print()
+        custom = input("  Personality: ").strip()
+        if custom:
+            persona["tone"] = "custom"
+            persona["personality"] = custom
+        tagline = input("  Tagline (short motto): ").strip()
+        if tagline:
+            persona["tagline"] = tagline
+        greeting = input("  Greeting (use {time_of_day} and {name}): ").strip()
+        if greeting:
+            persona["greeting"] = greeting
+        farewell = input("  Farewell (use {name}): ").strip()
+        if farewell:
+            persona["farewell"] = farewell
+
+    # Preview
+    from datetime import datetime
+    hour = datetime.now().hour
+    tod = "morning" if hour < 12 else "afternoon" if hour < 17 else "evening"
+    name = persona.get("name", "Assistant")
+
+    print(f"\n  -- Preview --")
+    print(f"  Greeting: \"{persona.get('greeting', '').format(time_of_day=tod, name=name)}\"")
+    print(f"  Tagline:  \"{persona.get('tagline', '')}\"")
+    print(f"  Farewell: \"{persona.get('farewell', '').format(name=name)}\"")
+    print(f"  Wake word: \"{persona.get('wake_word', '')}\"")
+    print()
 
 
 # --- Section 1: AI Providers --------------------------------------
@@ -807,10 +952,12 @@ def _show_config(settings: dict) -> None:
     """Display current configuration summary."""
     print("\n-- Current Configuration ----------------------------\n")
 
-    # Assistant
-    a = settings.get("A", {})
-    print(f"  Assistant Name:    {a.get('name', 'Assistant')}")
-    print(f"  Wake Word:         \"{a.get('wake_word', 'hey assistant')}\"")
+    # Persona
+    p = settings.get("persona", {})
+    print(f"  Name:        {p.get('name', 'Assistant')}")
+    print(f"  Tone:        {p.get('tone', 'professional-witty')}")
+    print(f"  Tagline:     \"{p.get('tagline', '')}\"")
+    print(f"  Wake Word:   \"{p.get('wake_word', 'hey assistant')}\"")
 
     # Active provider
     active = settings.get("ai", {}).get("active_provider", "not set")
@@ -920,17 +1067,16 @@ def _print_banner() -> None:
     print("""
   This wizard will help you set up:
 
-    1. AI Provider -pick your AI (Ollama, Groq, Gemini,
+    1. Persona -give your assistant a name and personality
+
+    2. AI Provider -pick your AI (Ollama, Groq, Gemini,
        Claude, OpenAI) or add any open-source model
 
-    2. Integrations -connect Google, Microsoft, Slack,
+    3. Integrations -connect Google, Microsoft, Slack,
        Figma, Instagram, Telegram, Discord, WhatsApp
 
-    3. Voice Automations -morning briefings, message
+    4. Voice Automations -morning briefings, message
        replies, Slack reminders, focus mode, etc.
-
-    4. Task Routing -optionally assign different AIs
-       to different tasks (e.g., Claude for coding)
 
   Your data stays on your machine. Cloud AI providers
   are opt-in and use YOUR API keys.

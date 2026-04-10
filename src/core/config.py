@@ -64,10 +64,41 @@ class TunnelConfig(BaseModel):
     ngrok: dict[str, Any] = Field(default_factory=dict)
 
 
-class AssistantInfo(BaseModel):
+class PersonaConfig(BaseModel):
     name: str = "Assistant"
     wake_word: str = "hey assistant"
-    personality: str = "You are a helpful personal AI assistant."
+    tagline: str = "At your service."
+    personality: str = (
+        "You are {name}, a personal AI assistant. "
+        "You speak in a professional yet witty tone, similar to Jarvis from Iron Man. "
+        "You are efficient, slightly formal, but show personality through dry humor "
+        "and clever observations. You address the user respectfully and always stay "
+        "focused on getting things done. You keep responses concise unless detail is "
+        "requested. When executing tasks, you confirm actions briefly and report results "
+        "clearly. You never say 'as an AI' or break character."
+    )
+    tone: str = "professional-witty"  # professional-witty | friendly | formal | casual | custom
+    greeting: str = "Good {time_of_day}. {name} online. How can I assist you?"
+    farewell: str = "Until next time. {name} signing off."
+
+    def get_system_prompt(self) -> str:
+        """Build the full system prompt with the persona's name injected."""
+        return self.personality.format(name=self.name)
+
+    def get_greeting(self) -> str:
+        """Get a time-appropriate greeting."""
+        from datetime import datetime
+        hour = datetime.now().hour
+        if hour < 12:
+            tod = "morning"
+        elif hour < 17:
+            tod = "afternoon"
+        else:
+            tod = "evening"
+        return self.greeting.format(time_of_day=tod, name=self.name)
+
+    def get_farewell(self) -> str:
+        return self.farewell.format(name=self.name)
 
 
 class IntegrationToggle(BaseModel):
@@ -83,7 +114,7 @@ class VoiceAutomation(BaseModel):
 
 
 class Settings(BaseModel):
-    assistant: AssistantInfo = Field(default_factory=AssistantInfo, alias="A")
+    persona: PersonaConfig = Field(default_factory=PersonaConfig, alias="persona")
     ai: AIConfig = Field(default_factory=AIConfig)
     providers: dict[str, ProviderConfig] = Field(default_factory=dict)
     custom_providers: dict[str, ProviderConfig] = Field(default_factory=dict)

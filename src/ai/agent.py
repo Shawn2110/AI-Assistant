@@ -88,10 +88,10 @@ class AssistantAgent:
         """The AI thinking node - processes messages and decides what to do."""
         llm = self._get_llm(state.get("provider_name"))
 
-        # Add system message with personality
+        # Add system message with persona
         messages = state["messages"]
         if not messages or not isinstance(messages[0], SystemMessage):
-            system_msg = SystemMessage(content=self.settings.assistant.personality)
+            system_msg = SystemMessage(content=self.settings.persona.get_system_prompt())
             messages = [system_msg] + messages
 
         response = await llm.ainvoke(messages)
