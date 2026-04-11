@@ -50,6 +50,9 @@ class VoiceConfig(BaseModel):
     tts_voice: str = "en-US-GuyNeural"
     silence_threshold_ms: int = 500
     listen_timeout_s: int = 10
+    wake_threshold: float = Field(default=0.7, ge=0.0, le=1.0)
+    vosk_model_path: str = "config/vosk-model"
+    input_device: int | None = None
 
 
 class ServerConfig(BaseModel):
