@@ -53,7 +53,7 @@
 
 ## Phase 3: Text-to-Speech
 
-- [ ] Task: Write tests for TTS engine
+- [~] Task: Write tests for TTS engine
   - Create `tests/test_tts.py`
   - Test that `TextToSpeech` can speak text using Edge-TTS (mock the network call)
   - Test automatic fallback to pyttsx3 when Edge-TTS fails
