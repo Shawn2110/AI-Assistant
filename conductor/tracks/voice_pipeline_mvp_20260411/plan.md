@@ -99,7 +99,7 @@
   - Wire config into VoicePipeline initialization
   - Pass all tests from previous task
 
-- [ ] Task: Conductor - User Manual Verification 'Phase 4: Pipeline Orchestration & Agent Integration' (Protocol in workflow.md)
+- [~] Task: Conductor - User Manual Verification 'Phase 4: Pipeline Orchestration & Agent Integration' (Protocol in workflow.md)
 
 ## Phase 5: Desktop Overlay Integration
 
