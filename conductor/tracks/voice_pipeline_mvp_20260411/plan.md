@@ -60,7 +60,7 @@
   - Test that TTS output produces audio data or triggers playback
   - Test empty string and long text edge cases
 
-- [ ] Task: Implement TTS engine
+- [x] Task: Implement TTS engine <!-- a86fe88 -->
   - Create `src/ai_assistant/voice/tts.py`
   - Implement `TextToSpeech` class with `speak(text)` async method
   - Online path: use `edge_tts.Communicate` to generate audio, play via sounddevice or temp file
