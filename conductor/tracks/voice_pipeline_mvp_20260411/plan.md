@@ -93,7 +93,7 @@
   - Test default values when voice section is missing
   - Test validation of config values (e.g., threshold between 0 and 1, valid model path)
 
-- [ ] Task: Implement voice configuration
+- [x] Task: Implement voice configuration <!-- 1e337fd -->
   - Add `voice:` section to config schema in `src/ai_assistant/config/`
   - Define Pydantic model for voice settings (wake_threshold, vosk_model_path, tts_voice, input_device)
   - Wire config into VoicePipeline initialization
