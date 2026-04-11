@@ -60,6 +60,9 @@ Open/close apps, manage files, control system power and volume, set reminders th
 ### 3. Communication Hub
 Read and send emails, manage calendar events, send messages on Slack, Telegram, Discord, and WhatsApp -- all from conversation with Mike.
 
+### 4. Media Control
+Control Spotify playback through voice -- play, pause, skip, search for songs/artists/playlists, queue tracks, and check what's currently playing.
+
 ## Platform Strategy
 
 - **Desktop (Primary):** Windows/macOS app with a 3D anime-style human avatar (Blender + Godot Engine), system tray background service, voice wake word, and CLI. Mike appears as a full animated character on screen.

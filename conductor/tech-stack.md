@@ -98,6 +98,7 @@
 | Discord | Bot token | Send/receive messages |
 | WhatsApp | API token | Send/receive messages |
 | Figma | Personal access token | Read designs, export assets |
+| Spotify | OAuth 2.0 | Play/pause/skip, search songs/artists/playlists, queue tracks, now playing |
 | System (built) | None | Open/close apps, power control, volume, files, reminders, system info |
 
 ## Dev Tools
