@@ -2,7 +2,7 @@
 
 ## Phase 1: Audio Capture & Wake Word Detection
 
-- [~] Task: Write tests for audio capture module
+- [x] Task: Write tests for audio capture module <!-- 6554f12 -->
   - Create `tests/test_audio_capture.py`
   - Test that `AudioCapture` can be instantiated with default and custom device settings
   - Test that audio chunks are emitted in the correct format (16-bit PCM, 16kHz, mono)
