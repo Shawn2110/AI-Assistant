@@ -32,7 +32,7 @@
 
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Audio Capture & Wake Word Detection' (Protocol in workflow.md) <!-- d2c8d9d -->
 
-## Phase 2: Speech-to-Text
+## Phase 2: Speech-to-Text [checkpoint: 51ff523]
 
 - [x] Task: Write tests for STT engine <!-- ddb1c60 -->
   - Create `tests/test_stt.py`
@@ -49,7 +49,7 @@
   - Configurable model path from `config/settings.yaml`
   - Pass all tests from previous task
 
-- [~] Task: Conductor - User Manual Verification 'Phase 2: Speech-to-Text' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 2: Speech-to-Text' (Protocol in workflow.md) <!-- 51ff523 -->
 
 ## Phase 3: Text-to-Speech
 
