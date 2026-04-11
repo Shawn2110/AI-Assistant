@@ -87,7 +87,7 @@
   - Integrate with existing agent in `src/ai_assistant/agent/`
   - Pass all tests from previous task
 
-- [~] Task: Write tests for voice configuration
+- [x] Task: Write tests for voice configuration <!-- 50cfa94 -->
   - Create `tests/test_voice_config.py`
   - Test that voice settings are loaded from `config/settings.yaml`
   - Test default values when voice section is missing
