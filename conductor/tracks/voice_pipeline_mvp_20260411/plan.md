@@ -23,7 +23,7 @@
   - Test that confidence threshold filtering works (above threshold = detected, below = ignored)
   - Test reset behavior after detection
 
-- [ ] Task: Implement wake word detector
+- [x] Task: Implement wake word detector <!-- e705349 -->
   - Create `src/ai_assistant/voice/wake_word.py`
   - Implement `WakeWordDetector` class wrapping openwakeword
   - Accept audio chunks, return detection events with confidence score
