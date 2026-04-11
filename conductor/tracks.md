@@ -4,5 +4,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-## [ ] Track: Build the Voice Pipeline MVP
+## [~] Track: Build the Voice Pipeline MVP
 *Link: [./conductor/tracks/voice_pipeline_mvp_20260411/](./conductor/tracks/voice_pipeline_mvp_20260411/)*

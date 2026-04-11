@@ -30,7 +30,7 @@
   - Configurable wake word and confidence threshold (default 0.7)
   - Pass all tests from previous task
 
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Audio Capture & Wake Word Detection' (Protocol in workflow.md)
+- [~] Task: Conductor - User Manual Verification 'Phase 1: Audio Capture & Wake Word Detection' (Protocol in workflow.md)
 
 ## Phase 2: Speech-to-Text
 
