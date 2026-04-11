@@ -118,7 +118,7 @@
   - Update Mike's expression/animation state during speaking
   - Pass all tests from previous task
 
-- [ ] Task: Wire voice pipeline startup into the main application entry point
+- [x] Task: Wire voice pipeline startup into the main application entry point <!-- fdf4eb7 -->
   - Update the main app initialization to start VoicePipeline alongside the desktop overlay
   - Ensure clean shutdown of voice pipeline when app exits
   - Test that the full application starts without errors
