@@ -42,7 +42,7 @@
   - Test error handling when model path is invalid
   - Mock `vosk` to avoid model dependency in tests
 
-- [ ] Task: Implement STT engine
+- [x] Task: Implement STT engine <!-- d4121e8 -->
   - Create `src/ai_assistant/voice/stt.py`
   - Implement `SpeechToText` class wrapping `vosk.KaldiRecognizer`
   - Accept audio chunks, accumulate partial results, return final transcript on silence
