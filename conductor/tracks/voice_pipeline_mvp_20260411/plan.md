@@ -111,7 +111,7 @@
   - Test that Mike's expression changes during speaking
   - Mock the tkinter overlay components
 
-- [ ] Task: Implement overlay voice integration
+- [x] Task: Implement overlay voice integration <!-- 6b26496 -->
   - Update `src/ai_assistant/gui/` to subscribe to VoicePipeline events
   - Show listening indicator when wake word detected
   - Display transcript in chat window when transcription completes
