@@ -32,9 +32,9 @@ Mike appears on screen in three ways:
 When summoned, Mike appears as an animated robot character on the desktop overlay. He shows speech bubbles with his responses, reacts with expressions (talking, happy, thinking), and can be dragged around. A chat window opens alongside him for longer conversations. When dismissed, he walks off screen or fades back to the system tray.
 
 ### Interaction Modes
-- **Voice conversation:** Speak naturally. Mike listens (STT), thinks, responds with speech (TTS) and on-screen text.
-- **Text chat:** Type in the chat window next to Mike, or use the CLI for terminal-based interaction.
-- **Quick command:** Press the hotkey, speak or type a one-liner, get a quick response -- Mike disappears after.
+- **Voice conversation (guided):** The user summons Mike first ("Hey Mike" / hotkey / tray). Mike acknowledges and asks what they need. The user states their intent (e.g., "Send a message"). Mike then guides them step-by-step with follow-up questions (platform? recipient? message?) to build a complete, structured command. Mike confirms the full action before executing.
+- **Text chat:** Type in the chat window next to Mike, or use the CLI for terminal-based interaction. The same guided flow applies -- Mike asks clarifying questions before acting.
+- **Quick command:** Press the hotkey, speak or type a one-liner, get a quick response -- Mike disappears after. For simple actions (e.g., "What time is it?"), no guided flow is needed.
 
 ### Offline vs Online
 

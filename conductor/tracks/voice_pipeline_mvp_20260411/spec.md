@@ -56,12 +56,26 @@ Implement a complete voice interaction pipeline for Mike so the user can summon 
 - All voice settings live in `config/settings.yaml` under a `voice:` key.
 - Configurable: wake word threshold, Vosk model path, TTS voice name, input device index.
 
+## Guided Interaction Flow
+
+The voice pipeline follows a structured, guided interaction model:
+
+1. **Summon:** User says "Hey Mike" (or hotkey/tray click) → Mike acknowledges.
+2. **Intent:** Mike asks "How can I help?" → User states intent (e.g., "Send a message").
+3. **Guided Questions:** Mike asks follow-up questions one at a time to build a structured command:
+   - e.g., "Which platform?" → "Slack" → "Who to?" → "Dave" → "What message?" → "Meeting at 3"
+4. **Confirm:** Mike repeats the full structured command: "I'll send 'Meeting at 3' to Dave on Slack. Shall I proceed?"
+5. **Execute:** On user confirmation, Mike executes and reports the result.
+6. **Return:** Mike returns to wake word listening mode.
+
+For simple queries (e.g., "What time is it?"), Mike answers directly without the guided flow.
+
 ## Acceptance Criteria
 
-1. User says "Hey Mike" → Mike wakes and begins listening (desktop overlay shows listening state).
-2. User speaks a command → command is transcribed and shown in the chat window.
-3. Transcribed command is processed by the LangGraph agent → response appears in chat.
-4. Mike speaks the response aloud using Edge-TTS (or pyttsx3 offline).
-5. After speaking, Mike returns to wake word listening mode.
+1. User says "Hey Mike" → Mike wakes, acknowledges, and asks what they need.
+2. User states an intent → Mike asks guided follow-up questions to build a structured command.
+3. Mike confirms the full action before executing.
+4. Transcribed commands are processed by the LangGraph agent → response appears in chat and is spoken.
+5. After completing the interaction, Mike returns to wake word listening mode.
 6. The pipeline handles errors gracefully: no crash on missing microphone, missing Vosk model, or TTS failure.
 7. Unit test coverage >80% for all new modules.
