@@ -70,7 +70,7 @@
 
 - [x] Task: Conductor - User Manual Verification 'Phase 3: Text-to-Speech' (Protocol in workflow.md) <!-- 99b8f9a -->
 
-## Phase 4: Pipeline Orchestration & Agent Integration
+## Phase 4: Pipeline Orchestration & Agent Integration [checkpoint: a1f1c5c]
 
 - [x] Task: Write tests for voice pipeline orchestrator <!-- a2ffd8b -->
   - Create `tests/test_voice_pipeline.py`
@@ -99,7 +99,7 @@
   - Wire config into VoicePipeline initialization
   - Pass all tests from previous task
 
-- [~] Task: Conductor - User Manual Verification 'Phase 4: Pipeline Orchestration & Agent Integration' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 4: Pipeline Orchestration & Agent Integration' (Protocol in workflow.md) <!-- a1f1c5c -->
 
 ## Phase 5: Desktop Overlay Integration
 
