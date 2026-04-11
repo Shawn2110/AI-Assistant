@@ -34,7 +34,7 @@
 
 ## Phase 2: Speech-to-Text
 
-- [~] Task: Write tests for STT engine
+- [x] Task: Write tests for STT engine <!-- ddb1c60 -->
   - Create `tests/test_stt.py`
   - Test that `SpeechToText` initializes with a Vosk model path
   - Test that feeding audio chunks produces a transcript string
