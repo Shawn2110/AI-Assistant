@@ -101,7 +101,7 @@
 
 - [x] Task: Conductor - User Manual Verification 'Phase 4: Pipeline Orchestration & Agent Integration' (Protocol in workflow.md) <!-- a1f1c5c -->
 
-## Phase 5: Desktop Overlay Integration
+## Phase 5: Desktop Overlay Integration [checkpoint: 1127d5e]
 
 - [x] Task: Write tests for overlay voice events <!-- fbbe1ed -->
   - Create `tests/test_overlay_voice.py`
@@ -123,4 +123,4 @@
   - Ensure clean shutdown of voice pipeline when app exits
   - Test that the full application starts without errors
 
-- [~] Task: Conductor - User Manual Verification 'Phase 5: Desktop Overlay Integration' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 5: Desktop Overlay Integration' (Protocol in workflow.md) <!-- 1127d5e -->
