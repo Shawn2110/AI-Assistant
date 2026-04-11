@@ -1,6 +1,6 @@
 # Plan: Build the Voice Pipeline MVP
 
-## Phase 1: Audio Capture & Wake Word Detection
+## Phase 1: Audio Capture & Wake Word Detection [checkpoint: d2c8d9d]
 
 - [x] Task: Write tests for audio capture module <!-- 6554f12 -->
   - Create `tests/test_audio_capture.py`
@@ -30,7 +30,7 @@
   - Configurable wake word and confidence threshold (default 0.7)
   - Pass all tests from previous task
 
-- [~] Task: Conductor - User Manual Verification 'Phase 1: Audio Capture & Wake Word Detection' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 1: Audio Capture & Wake Word Detection' (Protocol in workflow.md) <!-- d2c8d9d -->
 
 ## Phase 2: Speech-to-Text
 
