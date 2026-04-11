@@ -103,7 +103,7 @@
 
 ## Phase 5: Desktop Overlay Integration
 
-- [~] Task: Write tests for overlay voice events
+- [x] Task: Write tests for overlay voice events <!-- fbbe1ed -->
   - Create `tests/test_overlay_voice.py`
   - Test that the desktop overlay subscribes to voice pipeline events
   - Test that UI state changes on wake_detected (show listening indicator)
