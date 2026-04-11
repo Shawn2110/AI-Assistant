@@ -79,7 +79,7 @@
   - Test error recovery (e.g., STT fails mid-utterance, TTS fails, agent errors)
   - Mock all sub-components (AudioCapture, WakeWordDetector, SpeechToText, TextToSpeech, agent)
 
-- [ ] Task: Implement voice pipeline orchestrator
+- [x] Task: Implement voice pipeline orchestrator <!-- fa440c7 -->
   - Create `src/ai_assistant/voice/pipeline.py`
   - Implement `VoicePipeline` class that wires AudioCapture → WakeWordDetector → SpeechToText → LangGraph agent → TextToSpeech
   - Run as an asyncio task with start/stop controls
