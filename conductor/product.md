@@ -58,8 +58,8 @@ Read and send emails, manage calendar events, send messages on Slack, Telegram, 
 
 ## Platform Strategy
 
-- **Desktop (Primary):** Windows app with animated on-screen agent, system tray background service, voice wake word, and CLI. Mike is always one voice command or hotkey away.
-- **Mobile (Secondary):** Native mobile app (React Native / Flutter) connecting to Mike's backend server for chat, voice, and notifications on the go.
+- **Desktop (Primary):** Windows/macOS app with a 3D anime-style human avatar (Blender + Godot Engine), system tray background service, voice wake word, and CLI. Mike appears as a full animated character on screen.
+- **Mobile (Secondary):** Lightweight mobile app where Mike appears as a small logo/icon (like Bixby/Siri) with a minimal chat interface. No 3D avatar on mobile -- fast and unobtrusive.
 
 ## Action Confirmation
 
