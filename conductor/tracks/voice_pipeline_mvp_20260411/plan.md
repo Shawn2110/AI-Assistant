@@ -51,7 +51,7 @@
 
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Speech-to-Text' (Protocol in workflow.md) <!-- 51ff523 -->
 
-## Phase 3: Text-to-Speech
+## Phase 3: Text-to-Speech [checkpoint: 99b8f9a]
 
 - [x] Task: Write tests for TTS engine <!-- b4888fc -->
   - Create `tests/test_tts.py`
@@ -68,7 +68,7 @@
   - Configurable voice name in `config/settings.yaml`
   - Pass all tests from previous task
 
-- [~] Task: Conductor - User Manual Verification 'Phase 3: Text-to-Speech' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 3: Text-to-Speech' (Protocol in workflow.md) <!-- 99b8f9a -->
 
 ## Phase 4: Pipeline Orchestration & Agent Integration
 
