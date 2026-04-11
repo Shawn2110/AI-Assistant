@@ -16,7 +16,7 @@
   - Add configurable sample rate, channels, and device index
   - Pass all tests from previous task
 
-- [~] Task: Write tests for wake word detector
+- [x] Task: Write tests for wake word detector <!-- 2c4f9a7 -->
   - Create `tests/test_wake_word.py`
   - Test that `WakeWordDetector` loads the openwakeword model
   - Test that feeding a mock audio chunk with wake word returns a detection event
