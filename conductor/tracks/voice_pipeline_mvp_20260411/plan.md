@@ -49,7 +49,7 @@
   - Configurable model path from `config/settings.yaml`
   - Pass all tests from previous task
 
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: Speech-to-Text' (Protocol in workflow.md)
+- [~] Task: Conductor - User Manual Verification 'Phase 2: Speech-to-Text' (Protocol in workflow.md)
 
 ## Phase 3: Text-to-Speech
 
