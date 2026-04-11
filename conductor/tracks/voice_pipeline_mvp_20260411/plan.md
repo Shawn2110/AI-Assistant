@@ -68,7 +68,7 @@
   - Configurable voice name in `config/settings.yaml`
   - Pass all tests from previous task
 
-- [ ] Task: Conductor - User Manual Verification 'Phase 3: Text-to-Speech' (Protocol in workflow.md)
+- [~] Task: Conductor - User Manual Verification 'Phase 3: Text-to-Speech' (Protocol in workflow.md)
 
 ## Phase 4: Pipeline Orchestration & Agent Integration
 
