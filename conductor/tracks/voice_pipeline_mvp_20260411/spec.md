@@ -70,6 +70,16 @@ The voice pipeline follows a structured, guided interaction model:
 
 For simple queries (e.g., "What time is it?"), Mike answers directly without the guided flow.
 
+### One-Shot Structured Commands
+
+Some actions support a structured one-shot format that bypasses the guided flow entirely:
+
+- **Notification reply:** `"Mike, on [app] reply to [name] [message]"`
+  - e.g., "Mike, on Slack reply to Dave meeting at 3"
+  - e.g., "Mike, on WhatsApp reply to Mom I'll be home soon"
+  - Pattern: `on <platform> reply to <recipient> <message body>`
+  - Mike parses the platform, recipient, and message from the single utterance, confirms, and sends.
+
 ## Acceptance Criteria
 
 1. User says "Hey Mike" → Mike wakes, acknowledges, and asks what they need.

@@ -35,6 +35,10 @@ When summoned, Mike appears as an animated robot character on the desktop overla
 - **Voice conversation (guided):** The user summons Mike first ("Hey Mike" / hotkey / tray). Mike acknowledges and asks what they need. The user states their intent (e.g., "Send a message"). Mike then guides them step-by-step with follow-up questions (platform? recipient? message?) to build a complete, structured command. Mike confirms the full action before executing.
 - **Text chat:** Type in the chat window next to Mike, or use the CLI for terminal-based interaction. The same guided flow applies -- Mike asks clarifying questions before acting.
 - **Quick command:** Press the hotkey, speak or type a one-liner, get a quick response -- Mike disappears after. For simple actions (e.g., "What time is it?"), no guided flow is needed.
+- **Notification reply (one-shot):** User says: "Mike, on [app] reply to [name] [message]". This is a structured one-shot command that skips the guided flow. Examples:
+  - "Mike, on Slack reply to Dave meeting at 3"
+  - "Mike, on WhatsApp reply to Mom I'll be home soon"
+  - "Mike, on Discord reply to John sounds good"
 
 ### Offline vs Online
 
