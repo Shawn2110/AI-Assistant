@@ -72,7 +72,7 @@
 
 ## Phase 4: Pipeline Orchestration & Agent Integration
 
-- [ ] Task: Write tests for voice pipeline orchestrator
+- [~] Task: Write tests for voice pipeline orchestrator
   - Create `tests/test_voice_pipeline.py`
   - Test the full pipeline flow: wake → listen → transcribe → agent → speak → listen
   - Test that events are emitted at each stage (wake_detected, listening_started, transcription_complete, speaking_started, speaking_done)
