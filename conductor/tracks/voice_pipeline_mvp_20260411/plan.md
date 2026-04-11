@@ -9,7 +9,7 @@
   - Test graceful handling when no microphone is available
   - Mock `sounddevice` to avoid hardware dependency in tests
 
-- [ ] Task: Implement audio capture module
+- [x] Task: Implement audio capture module <!-- b208d65 -->
   - Create `src/ai_assistant/voice/audio_capture.py`
   - Implement `AudioCapture` class that opens a `sounddevice.InputStream`
   - Emit audio chunks via callback or async generator
