@@ -1,0 +1,8 @@
+{
+  "track_id": "voice_pipeline_mvp_20260411",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-04-11T12:00:00Z",
+  "updated_at": "2026-04-11T12:00:00Z",
+  "description": "Build the Voice Pipeline MVP -- Implement wake word detection, speech-to-text (Vosk), and text-to-speech (Edge-TTS / pyttsx3) so Mike can be summoned and conversed with by voice on desktop."
+}
