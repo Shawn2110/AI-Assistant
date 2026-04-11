@@ -123,4 +123,4 @@
   - Ensure clean shutdown of voice pipeline when app exits
   - Test that the full application starts without errors
 
-- [ ] Task: Conductor - User Manual Verification 'Phase 5: Desktop Overlay Integration' (Protocol in workflow.md)
+- [~] Task: Conductor - User Manual Verification 'Phase 5: Desktop Overlay Integration' (Protocol in workflow.md)
