@@ -129,7 +129,8 @@ def main():
         return
 
     if args.voice:
-        print("Voice mode coming soon! (Phase 2)")
+        from src.voice.start import start_voice
+        start_voice(provider=args.provider)
         return
 
     if args.server:
