@@ -37,10 +37,6 @@ def parse_args() -> argparse.Namespace:
         help="Override AI provider (groq, gemini, ollama, claude, openai)",
     )
     parser.add_argument(
-        "--pet", action="store_true",
-        help="Launch desktop pet (animated mascot on your screen)"
-    )
-    parser.add_argument(
         "--daemon", action="store_true",
         help="Run as background daemon with system tray icon and notifications"
     )
@@ -116,11 +112,6 @@ def main():
         from src.core.setup import run_setup
         run_setup()
         reload_settings()
-        return
-
-    if args.pet:
-        from src.pet.pet import start_pet
-        start_pet()
         return
 
     if args.daemon:
