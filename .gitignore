@@ -38,6 +38,13 @@ ngrok.yml
 # Personal docs (not part of the project)
 docs/
 
+# Generated workflow scripts + run logs (stay local, not committed)
+workflows/*.py
+workflows/*.json
+workflows/logs/*
+!workflows/.gitkeep
+!workflows/logs/.gitkeep
+
 # Node modules (tooling)
 node_modules/
 package.json
