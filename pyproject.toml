@@ -30,9 +30,7 @@ dependencies = [
     "google-api-python-client>=2.160",
     "pywinauto>=0.6",
 
-    # System tray & notifications
-    "pystray>=0.19",
-    "Pillow>=11.0",
+    # Notifications (voice-mode workflow failures)
     "winotify>=1.1",
 
     # Config & Utils
@@ -65,8 +63,12 @@ voice-extra = [
 router = [
     "sentence-transformers>=3.0",
 ]
+workflows = [
+    "apscheduler>=3.10",
+    "croniter>=2.0",
+]
 all = [
-    "ai-assistant[paid,microsoft,messaging,voice-extra,router]",
+    "ai-assistant[paid,microsoft,messaging,voice-extra,router,workflows]",
 ]
 dev = [
     "pytest>=8.3",
