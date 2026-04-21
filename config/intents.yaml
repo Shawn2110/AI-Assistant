@@ -1,0 +1,123 @@
+# Intent catalogue for the Tier-1 semantic classifier.
+#
+# Each intent maps to a list of example utterances. At startup the classifier
+# embeds every example; at query time the user's text is compared by cosine
+# similarity and the best match wins if confidence >= confidence_threshold
+# (configured in settings.yaml under router.confidence_threshold).
+#
+# params_extractor names a function in src.ai.router.patterns that pulls
+# structured arguments out of the raw text. If extraction returns None, the
+# decision is downgraded to "react" so the LLM can handle it properly.
+
+intents:
+  open_app:
+    examples:
+      - "launch spotify"
+      - "open chrome"
+      - "start the calculator"
+      - "can you open notepad"
+      - "fire up vscode"
+      - "please launch word for me"
+      - "get me spotify"
+      - "bring up the file explorer"
+      - "start discord"
+      - "open microsoft teams"
+    params_extractor: extract_app_name
+
+  close_app:
+    examples:
+      - "close spotify"
+      - "quit chrome"
+      - "exit notepad"
+      - "shut down vscode"
+      - "kill discord"
+      - "close the calculator"
+      - "please quit firefox"
+      - "stop spotify"
+      - "close word"
+      - "terminate excel"
+    params_extractor: extract_app_name
+
+  set_volume:
+    examples:
+      - "volume up"
+      - "volume down"
+      - "turn up the volume"
+      - "turn down the volume"
+      - "set volume to fifty"
+      - "make it louder"
+      - "make it quieter"
+      - "mute"
+      - "unmute"
+      - "max volume"
+    params_extractor: extract_volume
+
+  set_reminder:
+    examples:
+      - "remind me to drink water in ten minutes"
+      - "remind me to call mom at six"
+      - "set a reminder to take the trash out in an hour"
+      - "remind me about the meeting in thirty minutes"
+      - "tell me to stretch in fifteen minutes"
+      - "reminder to check the oven in five minutes"
+      - "remind me to leave in twenty minutes"
+      - "set a timer for the pasta in eight minutes"
+      - "remind me to email dave in two hours"
+      - "remind me to breathe in one minute"
+    params_extractor: extract_reminder
+
+  get_time:
+    examples:
+      - "what is the time"
+      - "what time is it"
+      - "tell me the time"
+      - "whats the time"
+      - "got the time"
+      - "give me the time"
+      - "time please"
+      - "current time"
+      - "what hour is it"
+      - "clock"
+    params_extractor: null
+
+  get_date:
+    examples:
+      - "what is the date"
+      - "whats the date"
+      - "what day is it"
+      - "tell me the date"
+      - "todays date"
+      - "what is today"
+      - "date please"
+      - "current date"
+      - "what day of the week"
+      - "what is today's date"
+    params_extractor: null
+
+  power:
+    examples:
+      - "shut down the computer"
+      - "restart the pc"
+      - "lock the screen"
+      - "put the computer to sleep"
+      - "reboot please"
+      - "lock my computer"
+      - "hibernate"
+      - "sleep the pc"
+      - "shutdown"
+      - "restart"
+    params_extractor: extract_power_action
+
+  system_status:
+    examples:
+      - "system status"
+      - "how is the system"
+      - "show me system info"
+      - "system information"
+      - "cpu usage"
+      - "memory usage"
+      - "disk space"
+      - "battery status"
+      - "whats my system info"
+      - "pc health"
+    params_extractor: null
