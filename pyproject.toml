@@ -62,8 +62,11 @@ messaging = [
 voice-extra = [
     "openwakeword>=0.6",
 ]
+router = [
+    "sentence-transformers>=3.0",
+]
 all = [
-    "ai-assistant[paid,microsoft,messaging,voice-extra]",
+    "ai-assistant[paid,microsoft,messaging,voice-extra,router]",
 ]
 dev = [
     "pytest>=8.3",
