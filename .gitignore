@@ -48,4 +48,5 @@ package-lock.json
 .graphify_cached.json
 .graphify_detect.json
 .graphify_uncached.txt
+.graphify_python
 graphify-out/
