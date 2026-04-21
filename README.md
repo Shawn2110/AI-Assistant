@@ -40,15 +40,15 @@ pip install -e ".[all]"
 
 **Other install options:**
 
-| Extra        | What it adds                    |
-|--------------|---------------------------------|
-| `paid`       | Claude (Anthropic) + OpenAI                 |
-| `microsoft`  | Outlook, Teams, OneDrive                    |
-| `messaging`  | Telegram + Discord bots                     |
-| `voice-extra`| openwakeword for wake detection             |
-| `router`     | sentence-transformers for Tier-1 classifier |
-| `workflows`  | apscheduler + croniter for scheduled jobs   |
-| `dev`        | pytest, ruff                                |
+| Extra         | What it adds                                |
+|---------------|---------------------------------------------|
+| `paid`        | Claude (Anthropic) + OpenAI                 |
+| `microsoft`   | Outlook, Teams, OneDrive                    |
+| `messaging`   | Telegram + Discord bots                     |
+| `voice-extra` | openwakeword for wake detection             |
+| `router`      | sentence-transformers for Tier-1 classifier |
+| `workflows`   | apscheduler + croniter for scheduled jobs   |
+| `dev`         | pytest, ruff                                |
 
 ## Configuration
 
