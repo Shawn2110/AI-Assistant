@@ -41,6 +41,10 @@ def parse_args() -> argparse.Namespace:
         help="Run as background daemon with system tray icon and notifications"
     )
     parser.add_argument(
+        "--explain-routing", type=str, default=None, metavar="COMMAND",
+        help="Print the intent router's decision for COMMAND and exit",
+    )
+    parser.add_argument(
         "--verbose", "-v", action="store_true", help="Enable debug logging"
     )
     return parser.parse_args()
@@ -79,7 +83,7 @@ async def run_interactive(provider: str | None = None) -> None:
     if active and active in settings.all_providers:
         model = settings.all_providers[active].model
         print(f"  [{active}: {model}]")
-    print(f"\n  Type your message, or 'quit' to exit.\n")
+    print("\n  Type your message, or 'quit' to exit.\n")
 
     while True:
         try:
@@ -112,6 +116,14 @@ def main():
         from src.core.setup import run_setup
         run_setup()
         reload_settings()
+        return
+
+    if args.explain_routing:
+        from src.ai.router import IntentRouter
+        settings = get_settings()
+        router = IntentRouter(config=settings.router)
+        decision = router.route(args.explain_routing)
+        print(decision.explain())
         return
 
     if args.daemon:
