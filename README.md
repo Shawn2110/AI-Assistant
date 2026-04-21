@@ -1,14 +1,15 @@
 # Mike - Personal AI Assistant
 
-A voice-enabled personal AI assistant that automates work tasks, provides reminders, and responds to voice commands. Accessible via voice, hotkey, system tray, or CLI.
+A voice-first personal AI assistant that automates work tasks, runs recurring workflows, and responds to voice commands. Accessible via voice or CLI.
 
 ## Features
 
 - **Voice Interaction** -- Wake word detection ("Hey Mike"), speech-to-text (Vosk), and text-to-speech (Edge-TTS with offline fallback)
 - **Multiple AI Providers** -- Groq, Gemini, Ollama, Claude, and OpenAI with automatic fallback
 - **Offline-First** -- Works fully offline with Ollama + Vosk + pyttsx3
+- **Intent Router** -- Trivial commands ("open spotify", "volume to 50") skip the LLM entirely via a three-tier regex + embedding-classifier router — sub-100ms fast path for ~70% of commands
+- **Code-as-Policy Workflows** -- Recurring tasks ("every Monday summarize my week") are generated once as sandboxed Python scripts and run deterministically on cron — no LLM in the run-loop
 - **System Control** -- Open/close apps, file operations, volume, power, reminders
-- **Background Daemon** -- System tray icon with notifications and quick commands
 - **Extensible Integrations** -- Google Suite, Microsoft, Slack, Discord, Telegram (planned)
 
 ## Requirements
@@ -41,11 +42,13 @@ pip install -e ".[all]"
 
 | Extra        | What it adds                    |
 |--------------|---------------------------------|
-| `paid`       | Claude (Anthropic) + OpenAI     |
-| `microsoft`  | Outlook, Teams, OneDrive        |
-| `messaging`  | Telegram + Discord bots         |
-| `voice-extra`| openwakeword for wake detection |
-| `dev`        | pytest, ruff                    |
+| `paid`       | Claude (Anthropic) + OpenAI                 |
+| `microsoft`  | Outlook, Teams, OneDrive                    |
+| `messaging`  | Telegram + Discord bots                     |
+| `voice-extra`| openwakeword for wake detection             |
+| `router`     | sentence-transformers for Tier-1 classifier |
+| `workflows`  | apscheduler + croniter for scheduled jobs   |
+| `dev`        | pytest, ruff                                |
 
 ## Configuration
 
@@ -77,14 +80,21 @@ assistant
 # Single command
 assistant "open spotify"
 
-# Voice mode (wake word + microphone)
+# Voice mode (wake word + microphone, also hosts the workflow scheduler)
 assistant --voice
 
-# Background daemon (system tray)
-assistant --daemon
+# Workflow management
+assistant workflow create "every monday at 9am summarize my calendar and post to slack" --schedule "0 9 * * MON"
+assistant workflow list
+assistant workflow run <id>
+assistant workflow disable <id>
+assistant workflow logs <id>
 
 # Use a specific AI provider
 assistant --provider claude "explain this code"
+
+# Inspect routing decisions (which tier caught a phrase)
+assistant --explain-routing "open spotify"
 
 # Debug logging
 assistant -v
@@ -95,53 +105,55 @@ assistant -v
 ```
                          ┌──────────────────────────────────┐
                          │          Entry Points            │
-                         │    CLI   |   Voice   |   Daemon  │
+                         │  CLI chat  |  Voice  |  Workflows│
                          └────────────┬─────────────────────┘
                                       │
-                      ┌───────────────┴───────────────┐
-                      │                               │
-           ┌──────────▼──────────┐         ┌──────────▼──────────┐
-           │   Voice Pipeline    │         │   System Tray       │
-           │                     │         │   Daemon            │
-           │ AudioCapture        │         │ Background Monitor  │
-           │ WakeWordDetector    │         │ Toast Notifications │
-           │ SpeechToText (Vosk) │         │ Quick Commands      │
-           │ TextToSpeech (Edge) │         │ Reminder Delivery   │
-           └──────────┬──────────┘         └──────────┬──────────┘
-                      │                               │
-                      └───────────────┬───────────────┘
-                                      │
-                           ┌──────────▼──────────┐
-               │   LangGraph Agent   │
-               │   (ReAct Pattern)   │
-               │                     │
-               │  Think → Act → Loop │
-               └──────────┬──────────┘
-                          │
-              ┌───────────┼───────────┐
-              │           │           │
-   ┌──────────▼──┐ ┌─────▼─────┐ ┌──▼──────────┐
-   │  Provider   │ │   Tools   │ │   Config    │
-   │  Factory    │ │           │ │             │
-   │             │ │ System    │ │ Pydantic    │
-   │ Groq       │ │ Google    │ │ YAML + .env │
-   │ Gemini     │ │ Microsoft │ │ OAuth Tokens│
-   │ Ollama     │ │ Slack     │ │ Persona     │
-   │ Claude     │ │ Discord   │ │             │
-   │ OpenAI     │ │ Telegram  │ │             │
-   └─────────────┘ └───────────┘ └─────────────┘
+                      ┌───────────────┴─────────────────┐
+                      │                                 │
+           ┌──────────▼──────────┐           ┌──────────▼──────────┐
+           │   Voice Pipeline    │           │  Workflow Manager   │
+           │  (hosts scheduler)  │           │                     │
+           │ AudioCapture        │           │ Generator + ast     │
+           │ WakeWordDetector    │           │ Validator + sandbox │
+           │ SpeechToText (Vosk) │           │ APScheduler (cron)  │
+           │ TextToSpeech (Edge) │           │ Per-run logs        │
+           └──────────┬──────────┘           └──────────┬──────────┘
+                      │                                 │
+                      └─────────────────┬───────────────┘
+                                        │
+                           ┌────────────▼────────────┐
+                           │   Intent Router         │
+                           │   regex -> classifier   │
+                           │   -> ReAct fallback     │
+                           └────────────┬────────────┘
+                                        │
+                           ┌────────────▼────────────┐
+                           │   LangGraph ReAct Agent │
+                           │                         │
+                           │   Think → Act → Loop    │
+                           └────────────┬────────────┘
+                                        │
+                         ┌──────────────┼──────────────┐
+                         │              │              │
+                ┌────────▼──────┐ ┌─────▼─────┐ ┌──────▼──────┐
+                │   Providers   │ │   Tools   │ │   Config    │
+                │  Groq/Gemini  │ │  System + │ │  Pydantic   │
+                │  Ollama       │ │  Google + │ │  YAML+.env  │
+                │  Claude/OpenAI│ │  MS/Slack │ │             │
+                └───────────────┘ └───────────┘ └─────────────┘
 ```
 
 **Key modules:**
 
-| Module             | Purpose                                      |
-|--------------------|----------------------------------------------|
-| `src/ai/`         | LangGraph agent, provider factory, fallback   |
-| `src/voice/`      | Audio capture, wake word, STT, TTS, pipeline  |
-| `src/integrations/`| System tools, Google, Microsoft, Slack        |
-| `src/core/`       | Config, logging, auth, exceptions             |
-| `src/server/`     | FastAPI server for mobile access              |
-| `src/daemon.py`   | System tray background service                |
+| Module              | Purpose                                          |
+|---------------------|--------------------------------------------------|
+| `src/ai/`           | LangGraph agent, provider factory, fallback     |
+| `src/ai/router/`    | Intent router (regex + embedding classifier)    |
+| `src/voice/`        | Audio capture, wake word, STT, TTS, pipeline    |
+| `src/workflows/`    | Generator, sandbox, scheduler, manager          |
+| `src/integrations/` | System tools, Google, Microsoft, Slack          |
+| `src/core/`         | Config, logging, auth, exceptions               |
+| `src/server/`       | FastAPI server                                  |
 
 ## AI Providers
 
@@ -183,18 +195,20 @@ ruff format src/ tests/
 ```
 AI-Assistant/
 ├── src/
-│   ├── ai/              # Agent and provider logic
-│   ├── voice/           # Voice pipeline components
+│   ├── ai/              # Agent, providers, router
+│   ├── voice/           # Voice pipeline (hosts scheduler)
+│   ├── workflows/       # Code-as-policy workflows
 │   ├── integrations/    # System and service tools
 │   ├── core/            # Config, auth, logging
 │   ├── server/          # FastAPI server
 │   ├── tunnel/          # ngrok remote access
-│   ├── cli.py           # CLI entry point
-│   └── daemon.py        # System tray daemon
+│   └── cli.py           # CLI entry point
 ├── tests/               # Test suite
 ├── config/
 │   ├── settings.yaml    # Main configuration
+│   ├── intents.yaml     # Router intent catalogue
 │   └── vosk-model/      # Offline speech model
+├── workflows/           # Generated workflow scripts + run logs
 ├── conductor/           # Development framework
 └── pyproject.toml       # Dependencies and build config
 ```
