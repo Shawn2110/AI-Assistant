@@ -37,10 +37,6 @@ def parse_args() -> argparse.Namespace:
         help="Override AI provider (groq, gemini, ollama, claude, openai)",
     )
     parser.add_argument(
-        "--daemon", action="store_true",
-        help="Run as background daemon with system tray icon and notifications"
-    )
-    parser.add_argument(
         "--explain-routing", type=str, default=None, metavar="COMMAND",
         help="Print the intent router's decision for COMMAND and exit",
     )
@@ -109,6 +105,14 @@ async def run_interactive(provider: str | None = None) -> None:
 
 
 def main():
+    # Intercept subcommands before the default argparse (which treats any
+    # positional as a chat message). Subcommands get their own parser.
+    argv = sys.argv[1:]
+    if argv and argv[0] == "workflow":
+        from src.workflows.cli import main as workflow_main
+        setup_logging("INFO")
+        sys.exit(workflow_main(argv[1:]))
+
     args = parse_args()
     setup_logging("DEBUG" if args.verbose else "INFO")
 
@@ -124,11 +128,6 @@ def main():
         router = IntentRouter(config=settings.router)
         decision = router.route(args.explain_routing)
         print(decision.explain())
-        return
-
-    if args.daemon:
-        from src.daemon import start_daemon
-        start_daemon()
         return
 
     if args.voice:
