@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 import yaml
 from dotenv import load_dotenv
@@ -41,6 +41,18 @@ class AIConfig(BaseModel):
     # Advanced: optional per-task provider routing
     # e.g., {"coding": "claude", "research": "groq", "email": "gemini"}
     task_routing: dict[str, str] = Field(default_factory=dict)
+
+
+class RouterConfig(BaseModel):
+    """Configuration for the intent router that sits in front of the ReAct agent."""
+
+    enabled: bool = True
+    classifier_enabled: bool = True
+    classifier_type: Literal["embedding", "ollama"] = "embedding"
+    confidence_threshold: float = Field(default=0.75, ge=0.0, le=1.0)
+    embedding_model: str = "all-MiniLM-L6-v2"
+    ollama_model: str = "qwen2.5:3b"
+    intents_path: str = "config/intents.yaml"
 
 
 class VoiceConfig(BaseModel):
@@ -122,6 +134,7 @@ class Settings(BaseModel):
     providers: dict[str, ProviderConfig] = Field(default_factory=dict)
     custom_providers: dict[str, ProviderConfig] = Field(default_factory=dict)
     voice: VoiceConfig = Field(default_factory=VoiceConfig)
+    router: RouterConfig = Field(default_factory=RouterConfig)
     server: ServerConfig = Field(default_factory=ServerConfig)
     tunnel: TunnelConfig = Field(default_factory=TunnelConfig)
     integrations: dict[str, IntegrationToggle] = Field(default_factory=dict)
