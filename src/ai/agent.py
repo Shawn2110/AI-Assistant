@@ -253,8 +253,46 @@ def _execute_intent(decision: RoutingDecision, tools_by_name: dict[str, Any]) ->
     if intent == "get_date":
         from datetime import date
         return date.today().strftime("Today is %A, %B %d, %Y.")
+    if intent == "create_workflow":
+        return _create_workflow(params.get("description", ""))
 
     return f"I recognized the intent '{intent}' but don't know how to handle it yet."
+
+
+def _create_workflow(description: str) -> str:
+    """Voice-triggered workflow creation. Returns a human-friendly confirmation."""
+    if not description:
+        return "Tell me what the workflow should do."
+    try:
+        from pathlib import Path
+
+        from src.ai.providers import create_provider
+        from src.core.config import get_settings
+        from src.workflows.generator import WorkflowGenerator
+        from src.workflows.manager import WorkflowManager
+    except ImportError as e:
+        return f"Workflow support isn't installed: {e}"
+
+    settings = get_settings()
+
+    def llm_factory():
+        name, config = settings.get_provider_for_task()
+        return create_provider(name, config)
+
+    try:
+        manager = WorkflowManager(
+            workflows_dir=Path("workflows"),
+            generator=WorkflowGenerator(llm_factory=llm_factory),
+        )
+        w = manager.create(description)
+    except Exception as e:
+        log.warning("agent.create_workflow.failed", error=str(e))
+        return f"I couldn't create that workflow: {e}"
+
+    return (
+        f"Workflow '{w.id}' created. Run it now with 'workflow run {w.id}' "
+        f"or add a schedule with 'workflow create ... --schedule ...'."
+    )
 
 
 def _invoke(tools_by_name: dict[str, Any], tool_name: str, args: dict[str, Any]) -> str:

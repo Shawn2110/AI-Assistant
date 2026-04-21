@@ -121,3 +121,17 @@ intents:
       - "whats my system info"
       - "pc health"
     params_extractor: null
+
+  create_workflow:
+    examples:
+      - "create a workflow to summarize my emails every morning"
+      - "make a workflow that pulls my calendar every monday"
+      - "set up a workflow to remind me to drink water every hour"
+      - "schedule a workflow to post a status update every day"
+      - "create a recurring task to clean my downloads every friday"
+      - "automate my morning routine"
+      - "make a new automation that checks my inbox at 9am"
+      - "schedule a job to summarize my week every sunday"
+      - "set up an automation for my standup notes"
+      - "build a workflow for daily tracker"
+    params_extractor: extract_workflow_description

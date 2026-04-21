@@ -9,6 +9,7 @@ from src.ai.router.patterns import (
     extract_power_action,
     extract_reminder,
     extract_volume,
+    extract_workflow_description,
     match_regex,
 )
 
@@ -153,3 +154,29 @@ class TestExtractors:
         assert r is not None
         assert "water the plants" in r["message"]
         assert r["minutes"] == 20
+
+
+class TestExtractWorkflowDescription:
+    @pytest.mark.parametrize("utterance,description", [
+        ("create a workflow to summarize my emails", "summarize my emails"),
+        ("make a workflow that pulls my calendar", "pulls my calendar"),
+        ("set up a workflow to remind me to drink water", "remind me to drink water"),
+        ("schedule an automation for my standup notes", "my standup notes"),
+        ("build a workflow for daily tracker", "daily tracker"),
+    ])
+    def test_extracts_description(self, utterance, description):
+        result = extract_workflow_description(utterance)
+        assert result is not None
+        assert description in result["description"]
+
+    @pytest.mark.parametrize("utterance", [
+        "what's the weather",
+        "open spotify",
+        "",
+    ])
+    def test_rejects_non_workflow_utterances(self, utterance):
+        assert extract_workflow_description(utterance) is None
+
+    def test_rejects_bare_create_workflow(self):
+        """Missing the target description means we can't act on it."""
+        assert extract_workflow_description("create a workflow") is None

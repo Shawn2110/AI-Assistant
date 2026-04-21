@@ -134,6 +134,37 @@ _TIME_MULTIPLIERS = {
 }
 
 
+_WORKFLOW_LEAD_RE = re.compile(
+    r"^\s*(?:please\s+)?"
+    r"(?:create|make|set\s*up|schedule|build|automate)"
+    r"\s+(?:an?\s+|my\s+)?"
+    r"(?:new\s+)?"
+    r"(?:recurring\s+)?"
+    r"(?:workflow|automation|job|task|recurring\s+task)"
+    r"\s*(?:to|for|that)?\s*",
+    re.I,
+)
+
+
+def extract_workflow_description(text: str) -> dict[str, Any] | None:
+    """Pull the free-form description out of 'create a workflow to X' style text.
+
+    If the leading 'create workflow' phrase is missing we return None so the
+    router downgrades to ReAct — the LLM is better at one-shot requests that
+    don't match the template.
+    """
+    t = (text or "").strip()
+    if not t:
+        return None
+    m = _WORKFLOW_LEAD_RE.match(t)
+    if not m:
+        return None
+    rest = t[m.end():].strip(" .!?")
+    if not rest:
+        return None
+    return {"description": rest}
+
+
 def extract_reminder(text: str) -> dict[str, Any] | None:
     """Parse 'remind me [to] <message> in <N> <unit>'."""
     t = (text or "").strip().lower()
@@ -222,4 +253,5 @@ EXTRACTORS: dict[str, Callable[[str], dict[str, Any] | None]] = {
     "extract_volume": extract_volume,
     "extract_power_action": extract_power_action,
     "extract_reminder": extract_reminder,
+    "extract_workflow_description": extract_workflow_description,
 }
